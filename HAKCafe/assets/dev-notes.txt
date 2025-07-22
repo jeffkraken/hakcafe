@@ -1,0 +1,6 @@
+# Dev Notes - Do Not Share
+Reminder:
+User: barista
+Pass: coffee4life
+
+We should really put this behind something more secure.

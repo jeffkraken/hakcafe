@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Challenge 1</title>
+</head>
+<body style="background:#222; color:white; font-family:monospace; padding:20px;">
+  <h2>Challenge 1: Python Basics</h2>
+  <p>What is the output of the following Python code?</p>
+  <pre>
+def mystery(a):
+    return a[::-1]
+
+print(mystery("coffee"))
+  </pre>
+
+  <input type="text" id="answer" placeholder="your answer">
+  <button onclick="check()">Submit</button>
+  <p id="result"></p>
+
+  <script>
+    function check() {
+      const val = document.getElementById('answer').value.trim().toLowerCase();
+      if (val === 'eeffoc') {
+        localStorage.setItem('solved-1', true);
+        document.getElementById('result').textContent = "✅ Correct!";
+      } else {
+        document.getElementById('result').textContent = "❌ Try again!";
+      }
+    }
+  </script>
+</body>
+</html>

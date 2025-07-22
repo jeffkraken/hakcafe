@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<!-- Hmm... noticed a strange file in /assets/ -->
+<html>
+<head>
+  <title>Challenge 2</title>
+</head>
+<body style="background:#222; color:white; font-family:monospace; padding:20px;">
+  <h2>Challenge 2: Nmap Recon Roast</h2>
+  <p>You ran a scan on a coffee shop's server and got the following output. What's the biggest red flag?</p>
+
+  <pre>
+PORT     STATE SERVICE VERSION
+21/tcp   open  ftp     vsftpd 2.3.4
+22/tcp   open  ssh     OpenSSH 7.4 (protocol 2.0)
+80/tcp   open  http    Apache httpd 2.4.18 ((Ubuntu))
+139/tcp  open  netbios-ssn Samba smbd 3.X (workgroup: WORKGROUP)
+445/tcp  open  microsoft-ds Samba smbd 3.X (workgroup: WORKGROUP)
+  </pre>
+
+  <p>Enter the **port number** that is most likely vulnerable (based on known CVEs).</p>
+
+  <input type="text" id="answer" placeholder="e.g., 21">
+  <button onclick="check()">Submit</button>
+  <p id="result"></p>
+
+  <script>
+    function check() {
+      const val = document.getElementById('answer').value.trim();
+      if (val === '21') {
+        localStorage.setItem('solved-2', true);
+        document.getElementById('result').textContent = "✅ Correct! vsftpd 2.3.4 has a known backdoor vulnerability.";
+      } else {
+        document.getElementById('result').textContent = "❌ Nope. Try again!";
+      }
+    }
+  </script>
+</body>
+</html>

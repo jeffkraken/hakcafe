@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Challenge 3</title>
+</head>
+<body style="background:#222; color:white; font-family:monospace; padding:20px;">
+  <h2>Challenge 3: Print Server Percolator</h2>
+  <p>You're reviewing a network diagram of a small business. The printer is exposed in a way that could be exploited. What's the issue?</p>
+
+  <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2d/Simple_network_diagram.svg/512px-Simple_network_diagram.svg.png" alt="Network Diagram" style="max-width: 100%; margin: 20px 0; border: 2px solid #fff;">
+
+  <p>The printer has the following settings:</p>
+  <ul style="text-align:left; display:inline-block;">
+    <li>Protocol: IPP (Port 631)</li>
+    <li>Protocol: SNMP (Port 161)</li>
+    <li>Protocol: LPD (Port 515)</li>
+    <li>Open to WAN: Yes</li>
+    <li>Authentication: None</li>
+    <li>Firmware: Last updated in 2017</li>
+  </ul>
+
+  <p>Enter the <strong>protocol</strong> that is being misused the most based on these settings.</p>
+
+  <input type="text" id="answer" placeholder="e.g., ipp">
+  <button onclick="check()">Submit</button>
+  <p id="result"></p>
+
+  <script>
+function check() {
+  const val = document.getElementById('answer').value.trim().toLowerCase();
+  if (val === 'ipp') {
+    localStorage.setItem('solved-3', true);
+    document.getElementById('result').textContent = "✅ Correct! IPP is exposed to the WAN with no authentication.";
+      } else if (val === 'snmp' || val === 'lpd') {
+        document.getElementById('result').textContent = "🟡 That's risky too—but the worst offender here is IPP exposed to the internet.";
+      } else {
+        document.getElementById('result').textContent = "❌ Not quite. Try again!";
+      }
+    }
+  </script>
+</body>
+</html>

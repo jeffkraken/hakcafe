@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Challenge 5</title>
+</head>
+<body style="background:#222; color:white; font-family:monospace; padding:20px;">
+  <h2>Challenge 5: Wi-Fi Misbrew</h2>
+  <p>You're reviewing the setup for a small coffee shop's Wi-Fi network. Based on the info below, what’s the biggest security issue?</p>
+
+  <ul style="text-align:left; display:inline-block;">
+    <li>SSID: CoffeeGuest</li>
+    <li>Security: WEP</li>
+    <li>MAC Filtering: Disabled</li>
+    <li>Hidden SSID: No</li>
+    <li>Guest Network Isolation: Disabled</li>
+    <li>Router Admin Panel: Accessible from WAN</li>
+  </ul>
+
+  <p>What is the <strong>worst</strong> vulnerability in this setup?</p>
+
+  <select id="answer">
+    <option value="">-- Choose an answer --</option>
+    <option value="mac_filtering">MAC Filtering Disabled</option>
+    <option value="wep">Use of WEP</option>
+    <option value="guest_isolation">Guest Isolation Disabled</option>
+    <option value="wan_admin">Admin Panel Exposed to WAN</option>
+  </select>
+
+  <button onclick="check()">Submit</button>
+  <p id="result"></p>
+
+  <script>
+    function check() {
+      const val = document.getElementById('answer').value;
+      if (val === 'wep') {
+        localStorage.setItem('solved-5', true);
+        document.getElementById('result').textContent = "✅ Correct! WEP is highly insecure and easily cracked.";
+      } else if (val === 'wan_admin') {
+        document.getElementById('result').textContent = "🟡 That's bad too, but WEP is the most vulnerable here.";
+      } else {
+        document.getElementById('result').textContent = "❌ Not quite. Focus on what’s easiest to exploit first.";
+      }
+    }
+  </script>
+</body>
+</html>

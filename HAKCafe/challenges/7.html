@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Challenge 7</title>
+</head>
+<body style="background:#222; color:white; font-family:monospace; padding:20px;">
+  <h2>Challenge 7: The BeanShare Recon</h2>
+  <p>A suspicious Windows machine has appeared on the network at <strong>192.168.1.150</strong>. Your task: write a Python script that can enumerate available SMB shares.</p>
+
+  <p>Submit the name of one share found on that host.</p>
+
+  <h3>Starter Script (Python)</h3>
+  <pre style="text-align:left; display:inline-block; background:#111; padding:10px; border:1px solid #fff;">
+# pip install pysmb
+from smb.SMBConnection import SMBConnection
+
+# Uncomment and complete the values below
+# conn = SMBConnection(
+#     username="guest",
+#     password="",
+#     my_name="attacker-machine",
+#     remote_name="target-machine",
+#     use_ntlm_v2=True
+# )
+
+# connected = conn.connect("192.168.1.150", 139)
+# if connected:
+#     shares = conn.listShares()
+#     for share in shares:
+#         print("Share:", share.name)
+  </pre>
+
+  <p><strong>What is the name of one accessible share on 192.168.1.150?</strong></p>
+
+  <input type="text" id="answer" placeholder="Share name">
+  <button onclick="check()">Submit</button>
+  <p id="result"></p>
+
+  <script>
+    function check() {
+      const val = document.getElementById('answer').value.trim().toLowerCase();
+      const accepted = ['public', 'shared', 'coffee_docs'];
+
+      if (accepted.includes(val)) {
+        localStorage.setItem('solved-7', true);
+        document.getElementById('result').textContent = "✅ Correct! You’ve successfully enumerated the SMB shares.";
+      } else {
+        document.getElementById('result').textContent = "❌ Incorrect or share not found. Double-check your script.";
+      }
+    }
+  </script>
+</body>
+</html>

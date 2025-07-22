@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Challenge 9</title>
+</head>
+<body style="background:#222; color:white; font-family:monospace; padding:20px;">
+  <h2>Challenge 9: The OSINT Brew</h2>
+  <p>You're nearing the bottom of the coffee cup...</p>
+  <p>A former HAKCafe developer left a config backup floating somewhere on the open internet. He mentioned it in a blog post once:  
+  <br><em>"If I ever lose it, I just search for 'config_backup_final'."</em></p>
+  
+  <p>Your task: Use your OSINT skills to find that config file and extract the flag.</p>
+
+  <input type="text" id="answer" placeholder="flag{...}">
+  <button onclick="check()">Submit</button>
+  <p id="result"></p>
+
+  <script>
+    function check() {
+      const val = document.getElementById('answer').value.trim().toLowerCase();
+      if (val === 'flag{google_is_your_best_friend}') {
+        localStorage.setItem('solved-9', true);
+        document.getElementById('result').textContent = "✅ Nicely done. You’ve completed the board!";
+      } else {
+        document.getElementById('result').textContent = "❌ That’s not it. Keep digging the open web.";
+      }
+    }
+  </script>
+</body>
+</html>
