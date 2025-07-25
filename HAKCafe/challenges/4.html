@@ -46,6 +46,7 @@ s.close()
         document.getElementById('result').textContent = "❌ Not quite. Think about how it's interacting with another system.";
       }
     }
+    window.parent.postMessage({type: 'challengeSolved', id:4}, '*');
   </script>
 </body>
 </html>
