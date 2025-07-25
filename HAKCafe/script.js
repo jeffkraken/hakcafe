@@ -38,7 +38,7 @@ function checkSolvedTiles() {
 
   const allSolved = [...Array(9)].every((_, i) => localStorage.getItem(`solved-${i+1}`));
   if (allSolved) {
-    document.getElementById('status').textContent = "🎉 All challenges complete! Loading next board soon...";
+    document.getElementById('status').textContent = "🎉 All challenges complete! More challenges coming soon!";
     setTimeout(() => location.reload(), 3000);
   }
 }
