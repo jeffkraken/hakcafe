@@ -25,6 +25,7 @@
         document.getElementById('result').textContent = "❌ That’s not it. Keep digging the open web.";
       }
     }
+    window.parent.postMessage({type: 'challengeSolved', id:9}, '*');
   </script>
 </body>
 </html>
