@@ -42,11 +42,11 @@ s.close()
       if (val === 'reverse_shell') {
         localStorage.setItem('solved-4', true);
         document.getElementById('result').textContent = "✅ Correct! It opens a reverse shell to 192.168.1.100.";
+        window.parent.postMessage({type: 'challengeSolved', id:4}, '*');
       } else {
         document.getElementById('result').textContent = "❌ Not quite. Think about how it's interacting with another system.";
       }
     }
-    window.parent.postMessage({type: 'challengeSolved', id:4}, '*');
   </script>
 </body>
 </html>
