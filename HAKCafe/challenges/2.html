@@ -19,7 +19,7 @@ PORT     STATE SERVICE VERSION
 
   <p>Enter the **port number** that is most likely vulnerable (based on known CVEs).</p>
 
-  <input type="text" id="answer" placeholder="e.g., 21">
+  <input type="text" id="answer" placeholder="e.g., 123">
   <button onclick="check()">Submit</button>
   <p id="result"></p>
 
@@ -29,11 +29,11 @@ PORT     STATE SERVICE VERSION
       if (val === '21') {
         localStorage.setItem('solved-2', true);
         document.getElementById('result').textContent = "✅ Correct! vsftpd 2.3.4 has a known backdoor vulnerability.";
+        window.parent.postMessage({type: 'challengeSolved', id:2}, '*');      
       } else {
         document.getElementById('result').textContent = "❌ Nope. Try again!";
       }
     }
-        window.parent.postMessage({type: 'challengeSolved', id:2}, '*');
   </script>
 </body>
 </html>
