@@ -21,11 +21,11 @@
       if (val === 'flag{google_is_your_best_friend}') {
         localStorage.setItem('solved-9', true);
         document.getElementById('result').textContent = "✅ Nicely done. You’ve completed the board!";
+        window.parent.postMessage({type: 'challengeSolved', id:9}, '*');
       } else {
         document.getElementById('result').textContent = "❌ That’s not it. Keep digging the open web.";
       }
     }
-    window.parent.postMessage({type: 'challengeSolved', id:9}, '*');
   </script>
 </body>
 </html>
