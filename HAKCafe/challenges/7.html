@@ -48,6 +48,7 @@ from smb.SMBConnection import SMBConnection
         document.getElementById('result').textContent = "❌ Incorrect or share not found. Double-check your script.";
       }
     }
+    window.parent.postMessage({type: 'challengeSolved', id:7}, '*');
   </script>
 </body>
 </html>
