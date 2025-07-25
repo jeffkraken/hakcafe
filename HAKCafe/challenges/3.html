@@ -37,6 +37,7 @@ function check() {
         document.getElementById('result').textContent = "❌ Not quite. Try again!";
       }
     }
+        window.parent.postMessage({type: 'challengeSolved', id:3}, '*');
   </script>
 </body>
 </html>
