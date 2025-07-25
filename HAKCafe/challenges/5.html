@@ -41,6 +41,7 @@
         document.getElementById('result').textContent = "❌ Not quite. Focus on what’s easiest to exploit first.";
       }
     }
+    window.parent.postMessage({type: 'challengeSolved', id:5}, '*');
   </script>
 </body>
 </html>
