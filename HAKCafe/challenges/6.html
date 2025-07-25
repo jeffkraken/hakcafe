@@ -30,6 +30,7 @@
         document.getElementById('result').textContent = "❌ Invalid credentials.";
       }
     }
+    window.parent.postMessage({type: 'challengeSolved', id:6}, '*');
   </script>
 </body>
 </html>
