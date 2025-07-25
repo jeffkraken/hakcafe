@@ -12,4 +12,4 @@ This project simulates a basic challenge environment with clickable tiles that m
 - Simple UI with dark mode styling
 - Custom status output area
 - Easily extensible HTML/JS/CSS structure
-- `robots.txt` hinting at restricted files – perfect for teaching enumeration concepts
+- `robots.txt` hinting at restricted files
