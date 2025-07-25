@@ -23,11 +23,11 @@ print(mystery("coffee"))
       if (val === 'eeffoc') {
         localStorage.setItem('solved-1', true);
         document.getElementById('result').textContent = "✅ Correct!";
+        window.parent.postMessage({type: 'challengeSolved', id:1}, '*');
       } else {
         document.getElementById('result').textContent = "❌ Try again!";
       }
     }
-    window.parent.postMessage({type: 'challengeSolved', id:1}, '*');
   </script>
 </body>
 </html>
