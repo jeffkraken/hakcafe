@@ -18,11 +18,11 @@
       if (val === 'flag{the_coffee_is_strong}') {
         localStorage.setItem('solved-8', true);
         document.getElementById('result').textContent = "✅ Decoded and delivered!";
+        window.parent.postMessage({type: 'challengeSolved', id:8}, '*');
       } else {
         document.getElementById('result').textContent = "❌ Nope! Make sure you're decoding it correctly.";
       }
     }
   </script>
-  window.parent.postMessage({type: 'challengeSolved', id:8}, '*');
 </body>
 </html>
