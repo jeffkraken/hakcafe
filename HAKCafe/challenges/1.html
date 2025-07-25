@@ -27,6 +27,7 @@ print(mystery("coffee"))
         document.getElementById('result').textContent = "❌ Try again!";
       }
     }
+    window.parent.postMessage({type: 'challengeSolved', id:1}, '*');
   </script>
 </body>
 </html>
