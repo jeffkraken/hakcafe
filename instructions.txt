@@ -2,17 +2,17 @@
  HAKCafe Vuln Site Setup Guide
 ==============================
 
-These instructions will help you quickly pull down and run the HAKCafe Vuln Site on a fresh DigitalOcean Droplet (or any Ubuntu-based VM).
+These instructions will help you quickly pull down and run the HAKCafe Vuln Site on a fresh DigitalOcean Droplet or any Linux-based VM with a stable internet connection.
 
 ---
 
 == STEP 1: SSH into Your Droplet
 --------------------------------
-First, connect to your DigitalOcean droplet via SSH:
+First, connect via SSH:
 
-    ssh root@your_droplet_ip
+    ssh root@your_ip
 
-*Replace "your_droplet_ip" with the actual IP address of your server.*
+*Replace "your_ip" with the actual IP address of your server.*
 
 ---
 
@@ -33,23 +33,21 @@ Use the following command to pull down the latest version of the site:
 
     apt install git -y
     git clone https://github.com/jeffkraken/hakcafe.git
-    cd hakcafe
-    python3 -m http.server 80
-
+ 
 ---
 
 == STEP 4: Start the Web Server
 -------------------------------
 In the `hakcafe` folder, run:
-
+    cd hakcafe
     python3 -m http.server 80
 
 Now the site is live! Visit:
 
-    http://your_droplet_ip
+    http://your_ip
 
 ---
 
-Have fun exploring vulnerabilities and learning web security! 🧠☕
+Have fun exploring vulnerabilities and learning web security!
 
 -- The HAKCafe Team
