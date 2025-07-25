@@ -6,7 +6,7 @@ These instructions will help you quickly pull down and run the HAKCafe Vuln Site
 
 ---
 
- STEP 1: SSH into Your Droplet
+== STEP 1: SSH into Your Droplet
 --------------------------------
 First, connect to your DigitalOcean droplet via SSH:
 
@@ -16,7 +16,7 @@ First, connect to your DigitalOcean droplet via SSH:
 
 ---
 
- STEP 2: Install a Web Server (Optional)
+== STEP 2: Install a Web Server
 ------------------------------------------
 To serve the vulnerable site, you can use a simple web server like Python's built-in one:
 
@@ -27,7 +27,7 @@ No need to configure anything else!
 
 ---
 
-STEP 3: Download the Project Files
+== STEP 3: Download the Project Files
 -------------------------------------
 Use the following command to pull down the latest version of the site:
 
@@ -38,7 +38,7 @@ Use the following command to pull down the latest version of the site:
 
 ---
 
-▶️ STEP 4: Start the Web Server
+== STEP 4: Start the Web Server
 -------------------------------
 In the `hakcafe` folder, run:
 
