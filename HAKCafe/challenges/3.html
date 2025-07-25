@@ -21,7 +21,7 @@
 
   <p>Enter the <strong>protocol</strong> that is being misused the most based on these settings.</p>
 
-  <input type="text" id="answer" placeholder="e.g., ipp">
+  <input type="text" id="answer" placeholder="e.g., http">
   <button onclick="check()">Submit</button>
   <p id="result"></p>
 
@@ -31,13 +31,13 @@ function check() {
   if (val === 'ipp') {
     localStorage.setItem('solved-3', true);
     document.getElementById('result').textContent = "✅ Correct! IPP is exposed to the WAN with no authentication.";
+    window.parent.postMessage({type: 'challengeSolved', id:3}, '*');
       } else if (val === 'snmp' || val === 'lpd') {
         document.getElementById('result').textContent = "🟡 That's risky too—but the worst offender here is IPP exposed to the internet.";
       } else {
         document.getElementById('result').textContent = "❌ Not quite. Try again!";
       }
     }
-        window.parent.postMessage({type: 'challengeSolved', id:3}, '*');
   </script>
 </body>
 </html>
