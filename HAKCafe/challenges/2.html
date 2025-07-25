@@ -33,6 +33,7 @@ PORT     STATE SERVICE VERSION
         document.getElementById('result').textContent = "❌ Nope. Try again!";
       }
     }
+        window.parent.postMessage({type: 'challengeSolved', id:2}, '*');
   </script>
 </body>
 </html>
