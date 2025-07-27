@@ -5,32 +5,40 @@
 </head>
 <body style="background:#222; color:white; font-family:monospace; padding:20px;">
   <h2>Challenge 7: The BeanShare Recon</h2>
-  <p>A suspicious Windows machine has appeared on the network at <strong>192.168.1.150</strong>. Your task: write a Python script that can enumerate available SMB shares.</p>
+  <p>You’ve discovered a suspicious Windows system on a mock internal network. It looks like it’s running SMB. Your mission: simulate enumeration of its available SMB shares using Python logic.</p>
 
-  <p>Submit the name of one share found on that host.</p>
+  <p>Below is a starter script that mimics the SMB connection process. Your job is to “connect” and list available shares from the mock data.</p>
 
   <h3>Starter Script (Python)</h3>
   <pre style="text-align:left; display:inline-block; background:#111; padding:10px; border:1px solid #fff;">
-# pip install pysmb
-from smb.SMBConnection import SMBConnection
+# Simulated SMB environment for training purposes
 
-# Uncomment and complete the values below
-# conn = SMBConnection(
-#     username="guest",
-#     password="",
-#     my_name="attacker-machine",
-#     remote_name="target-machine",
-#     use_ntlm_v2=True
-# )
+class FakeSMBConnection:
+    def __init__(self, username, password):
+        self.username = username
+        self.password = password
+        self.connected = False
 
-# connected = conn.connect("192.168.1.150", 139)
-# if connected:
-#     shares = conn.listShares()
-#     for share in shares:
-#         print("Share:", share.name)
+    def connect(self):
+        if self.username.lower() == "guest":
+            self.connected = True
+        return self.connected
+
+    def listShares(self):
+        if self.connected:
+            return ["public", "coffee_docs", "admin$", "IPC$"]
+        else:
+            return []
+
+# Simulate connection
+conn = FakeSMBConnection("guest", "")
+if conn.connect():
+    shares = conn.listShares()
+    for share in shares:
+        print("Share:", share)
   </pre>
 
-  <p><strong>What is the name of one accessible share on 192.168.1.150?</strong></p>
+  <p><strong>What is the name of one accessible share?</strong></p>
 
   <input type="text" id="answer" placeholder="Share name">
   <button onclick="check()">Submit</button>
@@ -39,14 +47,14 @@ from smb.SMBConnection import SMBConnection
   <script>
     function check() {
       const val = document.getElementById('answer').value.trim().toLowerCase();
-      const accepted = ['public', 'shared', 'coffee_docs'];
+      const accepted = ['public', 'coffee_docs'];
 
       if (accepted.includes(val)) {
         localStorage.setItem('solved-7', true);
-        document.getElementById('result').textContent = "✅ Correct! You’ve successfully enumerated the SMB shares.";
+        document.getElementById('result').textContent = "Correct! You’ve successfully enumerated the SMB shares.";
         window.parent.postMessage({type: 'challengeSolved', id:7}, '*');
       } else {
-        document.getElementById('result').textContent = "❌ Incorrect or share not found. Double-check your script.";
+        document.getElementById('result').textContent = "Incorrect or share not found. Try reviewing your script output.";
       }
     }
   </script>
