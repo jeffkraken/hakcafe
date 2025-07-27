@@ -9,34 +9,17 @@
 
   <p>Below is a starter script that mimics the SMB connection process. Your job is to “connect” and list available shares from the mock data.</p>
 
-  <h3>Starter Script (Python)</h3>
-  <pre style="text-align:left; display:inline-block; background:#111; padding:10px; border:1px solid #fff;">
-# Simulated SMB environment for training purposes
+<h3>SMB Share Scanner</h3>
+<button onclick="startScan()">Start Scan</button>
 
-class FakeSMBConnection:
-    def __init__(self, username, password):
-        self.username = username
-        self.password = password
-        self.connected = False
-
-    def connect(self):
-        if self.username.lower() == "guest":
-            self.connected = True
-        return self.connected
-
-    def listShares(self):
-        if self.connected:
-            return ["public", "coffee_docs", "admin$", "IPC$"]
-        else:
-            return []
-
-# Simulate connection
-conn = FakeSMBConnection("guest", "")
-if conn.connect():
-    shares = conn.listShares()
-    for share in shares:
-        print("Share:", share)
-  </pre>
+<div id="scannerModal" style="display:none; background:#111; padding:20px; margin-top:20px; border:1px solid #fff;">
+  <p>Scanning target system <code>192.168.1.15</code>...</p>
+  <ul id="shareList" style="list-style-type:none; padding:0;"></ul>
+  <p><strong>What is the name of one accessible share?</strong></p>
+  <input type="text" id="answer" placeholder="Share name">
+  <button onclick="check()">Submit</button>
+  <p id="result"></p>
+</div>
 
   <p><strong>What is the name of one accessible share?</strong></p>
 
@@ -44,19 +27,36 @@ if conn.connect():
   <button onclick="check()">Submit</button>
   <p id="result"></p>
 
-  <script>
-    function check() {
-      const val = document.getElementById('answer').value.trim().toLowerCase();
-      const accepted = ['public', 'coffee_docs'];
+<script>
+  function startScan() {
+    const modal = document.getElementById("scannerModal");
+    const list = document.getElementById("shareList");
+    modal.style.display = "block";
+    list.innerHTML = "";
 
-      if (accepted.includes(val)) {
-        localStorage.setItem('solved-7', true);
-        document.getElementById('result').textContent = "Correct! You’ve successfully enumerated the SMB shares.";
-        window.parent.postMessage({type: 'challengeSolved', id:7}, '*');
-      } else {
-        document.getElementById('result').textContent = "Incorrect or share not found. Try reviewing your script output.";
-      }
+    const shares = ["public", "coffee_docs", "admin$", "IPC$"];
+    let i = 0;
+    const interval = setInterval(() => {
+      const li = document.createElement("li");
+      li.textContent = `Discovered share: ${shares[i]}`;
+      list.appendChild(li);
+      i++;
+      if (i >= shares.length) clearInterval(interval);
+    }, 800);
+  }
+
+  function check() {
+    const val = document.getElementById('answer').value.trim().toLowerCase();
+    const accepted = ['public', 'coffee_docs'];
+
+    if (accepted.includes(val)) {
+      localStorage.setItem('solved-7', true);
+      document.getElementById('result').textContent = "Correct! You’ve successfully enumerated the SMB shares.";
+      window.parent.postMessage({type: 'challengeSolved', id:7}, '*');
+    } else {
+      document.getElementById('result').textContent = "Incorrect or share not found. Try scanning again.";
     }
-  </script>
+  }
+</script>
 </body>
 </html>
