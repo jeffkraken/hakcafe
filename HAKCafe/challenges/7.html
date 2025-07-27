@@ -5,9 +5,9 @@
 </head>
 <body style="background:#222; color:white; font-family:monospace; padding:20px;">
   <h2>Challenge 7: The BeanShare Recon</h2>
-  <p>You’ve discovered a suspicious Windows system on a mock internal network. It looks like it’s running SMB. Your mission: simulate enumeration of its available SMB shares using Python logic.</p>
+  <p>You’ve discovered a suspicious Windows system on a mock internal network. It looks like it’s running SMB. </p>
 
-  <p>Below is a starter script that mimics the SMB connection process. Your job is to “connect” and list available shares from the mock data.</p>
+  <p>Use the following SMB connection tool to view shares and determine the suspicious host.</p>
 
 <h3>SMB Share Scanner</h3>
 <button onclick="startScan()">Start Scan</button>
@@ -15,17 +15,11 @@
 <div id="scannerModal" style="display:none; background:#111; padding:20px; margin-top:20px; border:1px solid #fff;">
   <p>Scanning target system <code>192.168.1.15</code>...</p>
   <ul id="shareList" style="list-style-type:none; padding:0;"></ul>
-  <p><strong>What is the name of one accessible share?</strong></p>
+  <p><strong>What is the name of an accessible share?</strong></p>
   <input type="text" id="answer" placeholder="Share name">
   <button onclick="check()">Submit</button>
   <p id="result"></p>
 </div>
-
-  <p><strong>What is the name of one accessible share?</strong></p>
-
-  <input type="text" id="answer" placeholder="Share name">
-  <button onclick="check()">Submit</button>
-  <p id="result"></p>
 
 <script>
   function startScan() {
@@ -51,10 +45,10 @@
 
     if (accepted.includes(val)) {
       localStorage.setItem('solved-7', true);
-      document.getElementById('result').textContent = "Correct! You’ve successfully enumerated the SMB shares.";
+      document.getElementById('result').textContent = "Correct! You’ve successfully enumerated the SMB shares!";
       window.parent.postMessage({type: 'challengeSolved', id:7}, '*');
     } else {
-      document.getElementById('result').textContent = "Incorrect or share not found. Try scanning again.";
+      document.getElementById('result').textContent = "Try scanning again.";
     }
   }
 </script>
