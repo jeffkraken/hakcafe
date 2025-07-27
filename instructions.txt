@@ -21,7 +21,7 @@ First, connect via SSH:
 To serve the vulnerable site, you can use a simple web server like Python's built-in one:
 
     apt update
-    apt install python3 -y
+    apt install python3 git -y
 
 No need to configure anything else!
 
@@ -31,7 +31,6 @@ No need to configure anything else!
 -------------------------------------
 Use the following command to pull down the latest version of the site:
 
-    apt install git -y
     git clone https://github.com/jeffkraken/hakcafe.git
  
 ---
@@ -39,7 +38,8 @@ Use the following command to pull down the latest version of the site:
 == STEP 4: Start the Web Server
 -------------------------------
 In the `hakcafe` folder, run:
-    cd hakcafe
+
+    cd HAKCafe
     python3 -m http.server 80
 
 Now the site is live! Visit:
