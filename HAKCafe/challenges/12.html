@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Challenge 12</title>
+</head>
+<body style="background:#222; color:white; font-family:monospace; padding:20px;">
+  <h2>Challenge 12: Print Queue Brew</h2>
+  <p>Strange activity has been reported on the print server. A print job was used to deploy malware onto the system.</p>
+  <p>Use the Print Queue Monitor to watch the print jobs come in. Then, identify the <strong>name of the suspicious document</strong>.</p>
+
+  <button onclick="startPrintQueue()">Start Print Queue</button>
+
+  <div id="printModal" style="display:none; background:#111; padding:20px; margin-top:20px; border:1px solid #fff;">
+    <p>Monitoring incoming print jobs...</p>
+    <ul id="printList" style="list-style-type:none; padding:0;"></ul>
+
+    <p><strong>Which document appears malicious?</strong></p>
+    <input type="text" id="answer" placeholder="e.g., payroll_q2_2023.pdf">
+    <button onclick="check()">Submit</button>
+    <p id="result"></p>
+  </div>
+
+  <script>
+    function startPrintQueue() {
+      const modal = document.getElementById("printModal");
+      const list = document.getElementById("printList");
+      modal.style.display = "block";
+      list.innerHTML = "";
+
+      const jobs = [
+        "team_roster.docx",
+        "q3_sales_forecast.xlsx",
+        "printer_test_page.pdf",
+        "confidential_merge_report.docx",
+        "funny_cat_meme.jpg",
+        "invoice_1087.pdf",
+        "resume_final.pdf",
+        "firmware_update.ps1",
+        "holiday_schedule.docx",
+        "floorplan_2nd_floor.png"
+      ];
+
+      let i = 0;
+      const interval = setInterval(() => {
+        const li = document.createElement("li");
+        li.textContent = `Print job received: ${jobs[i]}`;
+        list.appendChild(li);
+        i++;
+        if (i >= jobs.length) clearInterval(interval);
+      }, 700);
+    }
+
+    function check() {
+      const val = document.getElementById('answer').value.trim().toLowerCase();
+      if (val === 'firmware_update.ps1') {
+        localStorage.setItem('solved-12', true);
+        document.getElementById('result').textContent = "Correct! That PowerShell script was disguised as a print job.";
+        window.parent.postMessage({type: 'challengeSolved', id:12}, '*');
+      } else {
+        document.getElementById('result').textContent = "Nope. That file looks normal. Try again!";
+      }
+    }
+  </script>
+</body>
+</html>
