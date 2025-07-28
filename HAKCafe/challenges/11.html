@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Challenge 11</title>
+</head>
+<body style="background:#222; color:white; font-family:monospace; padding:20px;">
+  <h2>Challenge 11: Toasted Firewall</h2>
+  <p>After a recent breach, it became obvious that the firewall was bypassed by the attacker.</p>
+  <p>Review the following list of valid host addresses and then use the review tool to identify how the attacker bypassed the firewall.</p>
+
+<dl>
+  <dt>Host Address: 10.11.12.10</dt>
+  <dd>- User: Matt Adore</dd>
+  <dt>Host Address: 10.11.12.11</dt>
+  <dd>- User: Erin Prade</dd>
+  <dt>Host Address: 10.11.12.12</dt>
+  <dd>- Host: Nelson Atkins</dd>
+  <dt>Host Address: 10.11.12.13</dt>
+  <dd>- User: Anna Falafel</dd>
+</dl> 
+
+<h3>Network Traffic Capture</h3>
+<button onclick="startReview()">Start Review</button>
+
+<div id="reviewModal" style="display:none; background:#111; padding:20px; margin-top:20px; border:1px solid #fff;">
+  <p>Replaying captured traffic...</p>
+  <ul id="reviewList" style="list-style-type:none; padding:0;"></ul>
+  <p><strong>Which user's workstation was used to bypass the firewall?</strong></p>
+    <select id="answer">
+        <option value="">-- Choose an answer --</option>
+        <option value="A">Matt Adore</option>
+        <option value="B">Erin Prade</option>
+        <option value="C">Nelson Atkins</option>
+        <option value="D">Anna Falafel</option>
+    </select>
+
+  <button onclick="check()">Submit</button>
+  <p id="result"></p>
+</div>
+
+  <script>
+    function startReview() {
+        const modal = document.getElementById("reviewModal");
+        const list = document.getElementById("reviewList");
+        modal.style.display = "block";
+        list.innerHTML = "";
+
+        const sources = [
+            "10.11.12.11", "10.11.12.11", "10.11.12.11", "192.168.68.3", "192.168.68.3", "10.11.12.12", "10.11.12.13", "10.11.12.15", "10.11.12.11", "10.11.12.14"
+        ];
+        const protocols = [
+            "unknown", "ssh", "rdp", "unknown", "http", "icmp", "smb", "dns", "ntp", "http"
+        ];
+        const ports = [
+            "1080", "22", "3389", "1080", "80", "0", "445", "53", "123", "80"
+        ];
+        const dests = [
+            "192.168.68.3", "168.168.68.1", "192.168.68.10", "8.8.8.8", "93.184.216.34", "10.11.12.13", "10.11.12.20", "10.11.12.1", "time.windows.com", "intranet.local"
+        ];
+        let i = 0;
+        const interval = setInterval(() => {
+            const li = document.createElement("li");
+            li.textContent = `Detected: ${sources[i]} used ${protocols[i]} over ${ports[i]} to connect to ${dests[i]}`;
+            list.appendChild(li);
+            i++;
+            if (i >= sources.length) clearInterval(interval);
+        }, 800);
+    }
+
+    function check() {
+      const val = document.getElementById('answer').value.trim();
+      if (val === 'B') {
+        localStorage.setItem('solved-11', true);
+        document.getElementById('result').textContent = "Correct!";
+        window.parent.postMessage({type: 'challengeSolved', id:11}, '*');      
+      } else {
+        document.getElementById('result').textContent = "Nope. Try again!";
+      }
+    }
+  </script>
+</body>
+</html>
