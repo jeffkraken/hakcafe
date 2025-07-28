@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Challenge 13</title>
+</head>
+<body style="background:#222; color:white; font-family:monospace; padding:20px;">
+  <h2>Challenge 13: SuspiciousEspresso Flood</h2>
+  <p>Several machines have begun exhibiting odd network behavior.</p>
+  <p>Monitor the activity of <strong>10.11.12.11</strong> and determine the type of malicious behavior.</p>
+
+  <button onclick="startActivity()">Start Monitor</button>
+
+  <div id="activityModal" style="display:none; background:#111; padding:20px; margin-top:20px; border:1px solid #fff;">
+    <p>Monitoring outbound activity on 10.11.12.11...</p>
+    <ul id="activityList" style="list-style-type:none; padding:0;"></ul>
+
+    <p><strong>What kind of malicious behavior is this?</strong></p>
+    <select id="answer">
+      <option value="">-- Choose an answer --</option>
+      <option value="keylogger">Keylogger</option>
+      <option value="reverse_shell">Reverse Shell</option>
+      <option value="ransomware">Ransomware</option>
+      <option value="ddos">DDoS</option>
+    </select>
+    <button onclick="check()">Submit</button>
+    <p id="result"></p>
+  </div>
+
+  <script>
+    function startActivity() {
+      const modal = document.getElementById("activityModal");
+      const list = document.getElementById("activityList");
+      modal.style.display = "block";
+      list.innerHTML = "";
+
+      const actions = [
+        "Connection to 45.77.89.20:80 initiated",
+        "Connection to 45.77.89.20:80 initiated",
+        "Connection to 45.77.89.20:80 initiated",
+        "Connection to 45.77.89.20:80 initiated",
+        "Connection to 45.77.89.20:80 initiated",
+        "Rate of 60+ connections/sec sustained for 10+ minutes",
+        "Outbound packet volume exceeded 500MB in 60 seconds",
+        "Detected similar activity from 10.11.12.9 and 10.11.12.14",
+        "Botnet pattern detected: Coordinated flood to 45.77.89.20",
+        "Suspicious process: flooder.exe running under SYSTEM"
+      ];
+
+      let i = 0;
+      const interval = setInterval(() => {
+        const li = document.createElement("li");
+        li.textContent = `Activity Log: ${actions[i]}`;
+        list.appendChild(li);
+        i++;
+        if (i >= actions.length) clearInterval(interval);
+      }, 700);
+    }
+
+    function check() {
+      const val = document.getElementById('answer').value;
+      if (val === 'ddos') {
+        localStorage.setItem('solved-13', true);
+        document.getElementById('result').textContent = "Correct!.";
+        window.parent.postMessage({type: 'challengeSolved', id:13}, '*');
+      } else {
+        document.getElementById('result').textContent = "Not quite. Look at the traffic pattern — it's not just one connection.";
+      }
+    }
+  </script>
+</body>
+</html>
