@@ -30,12 +30,12 @@ function check() {
   const val = document.getElementById('answer').value.trim().toLowerCase();
   if (val === 'ipp') {
     localStorage.setItem('solved-3', true);
-    document.getElementById('result').textContent = "✅ Correct! IPP is exposed to the WAN with no authentication.";
+    document.getElementById('result').textContent = "Correct! IPP is exposed to the WAN with no authentication.";
     window.parent.postMessage({type: 'challengeSolved', id:3}, '*');
       } else if (val === 'snmp' || val === 'lpd') {
-        document.getElementById('result').textContent = "🟡 That's risky too—but the worst offender here is IPP exposed to the internet.";
+        document.getElementById('result').textContent = "That's risky too... but the worst offender is still out there... exposed to the internet.";
       } else {
-        document.getElementById('result').textContent = "❌ Not quite. Try again!";
+        document.getElementById('result').textContent = "Not quite. Try again!";
       }
     }
   </script>
