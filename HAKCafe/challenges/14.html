@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Challenge 14</title>
+</head>
+<body style="background:#222; color:white; font-family:monospace; padding:20px;">
+  <h2>Challenge 14: Distance Brew</h2>
+  <p>Suspicious traffic has been logged involving a coffee shop's wireless router.</p>
+  <p>Use the replay tool below to investigate the events and determine what vulnerability made the attack possible.</p>
+
+  <button onclick="startReplay()">Replay Attack</button>
+
+  <div id="replayModal" style="display:none; background:#111; padding:20px; margin-top:20px; border:1px solid #fff;">
+    <p>Replaying remote attack on CoffeeGuest network...</p>
+    <ul id="attackList" style="list-style-type:none; padding:0;"></ul>
+
+    <p><strong>What vulnerability made this attack possible?</strong></p>
+    <select id="answer">
+      <option value="">-- Choose an answer --</option>
+      <option value="a">MAC Filtering Disabled</option>
+      <option value="b">Use of WEP</option>
+      <option value="c">Guest Isolation Disabled</option>
+      <option value="d">Admin Panel Exposed to WAN</option>
+    </select>
+    <button onclick="check()">Submit</button>
+    <p id="result"></p>
+  </div>
+
+  <script>
+    function startReplay() {
+      const modal = document.getElementById("replayModal");
+      const list = document.getElementById("attackList");
+      modal.style.display = "block";
+      list.innerHTML = "";
+
+      const steps = [
+        "External scan from 66.32.44.89 detected on port 80",
+        "Discovered login page at http://203.0.113.42 (CoffeeGuest router)",
+        "Router admin panel responded with default branding",
+        "Login prompt revealed over unencrypted HTTP",
+        "Attacker attempted login with default credentials: admin / admin",
+        "Access granted — configuration panel exposed",
+        "Attacker modified DNS and firewall settings",
+        "Router rebooted remotely",
+        "CoffeeGuest network traffic rerouted through malicious DNS"
+      ];
+
+      let i = 0;
+      const interval = setInterval(() => {
+        const li = document.createElement("li");
+        li.textContent = `Replay Log: ${steps[i]}`;
+        list.appendChild(li);
+        i++;
+        if (i >= steps.length) clearInterval(interval);
+      }, 800);
+    }
+
+    function check() {
+      const val = document.getElementById('answer').value;
+      if (val === 'd') {
+        localStorage.setItem('solved-14', true);
+        document.getElementById('result').textContent = "Correct! The admin panel was exposed to the internet with default credentials.";
+        window.parent.postMessage({type: 'challengeSolved', id:14}, '*');
+      } else if (val === b) {
+        document.getElementById('result').textContent = "WEP is bad, but this attack didn’t rely on wireless encryption.";
+      } else {
+        document.getElementById('result').textContent = "Not quite. Look closely at how the attacker gained access remotely.";
+      }
+    }
+  </script>
+</body>
+</html>
