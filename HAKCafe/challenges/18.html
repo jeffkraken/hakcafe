@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Challenge 9</title>
+</head>
+<body style="background:#222; color:white; font-family:monospace; padding:20px;">
+  <h2>Challenge 9: OSINT Drip</h2>
+  <p>A leaked internal chat log from HAKCafe has surfaced.</p>
+  <p>Use the logs to track down a public link that may contain sensitive information.</p>
+
+  <button onclick="startLog()">View Chat Log</button>
+
+  <div id="logModal" style="display:none; background:#111; padding:20px; margin-top:20px; border:1px solid #fff;">
+    <p>HAKCafe Dev Chat - #infra-ops (Leaked)</p>
+    <ul id="chatList" style="list-style-type:none; padding:0;"></ul>
+    <button id="pasteButton" onclick="showPaste()" style="display:none; margin-top:15px;">📄 See Paste</button>
+
+    <div id="pasteViewer" style="display:none; margin-top:20px; background:#222; padding:15px; border:1px dashed #888;">
+      <p><strong>Paste Content:</strong></p>
+      <pre style="white-space:pre-wrap; background:#111; padding:10px; border:1px solid #444;">
+# staging_config_backup.txt
+# for dev use only - temporary!
+
+user: admin
+pass: coffeeM4st3r
+
+[archive]
+vault_enabled = false
+token = 1324-8849-KEY-EXPOSED
+
+# test strings
+flag{decaf_sucks}
+flag{this_one_is_fake}
+flag{internal_leaks_are_external_problems}
+flag{devtools_rule}
+
+# end of file
+      </pre>
+    </div>
+
+    <p><strong>Enter the flag you found in the exposed data:</strong></p>
+    <input type="text" id="answer" placeholder="flag{...}">
+    <button onclick="check()">Submit</button>
+    <p id="result"></p>
+  </div>
+
+  <script>
+    function startLog() {
+      const modal = document.getElementById("logModal");
+      const list = document.getElementById("chatList");
+      const pasteBtn = document.getElementById("pasteButton");
+      modal.style.display = "block";
+      list.innerHTML = "";
+
+      const chat = [
+        "[07:32] @nick.dev: anyone seen the staging creds? I lost them AGAIN",
+        "[07:33] @devin.coffee: I had them in a pastebin a while ago... something like paste[dot]hakcafe[dot]com/d3vtools",
+        "[07:35] @nick.dev: lol. seriously? that’s public dude.",
+        "[07:36] @kai.admin: wait did you just paste a config dump...?",
+        "[07:38] @devin.coffee: it was just for temp use 🙃",
+        "[07:42] @alex: hey can someone delete that link? it’s still up",
+        "[07:46] @kai.admin: doesn’t matter now. it's been scraped. flag is out.",
+        "[07:47] @nick.dev: ffs. next time we use vault."
+      ];
+
+      let i = 0;
+      const interval = setInterval(() => {
+        const li = document.createElement("li");
+        li.textContent = chat[i];
+        list.appendChild(li);
+        i++;
+        if (i >= chat.length) {
+          clearInterval(interval);
+          pasteBtn.style.display = "inline-block";
+        }
+      }, 1000);
+    }
+
+    function showPaste() {
+      document.getElementById("pasteViewer").style.display = "block";
+    }
+
+    function check() {
+      const val = document.getElementById('answer').value.trim().toLowerCase();
+      if (val === 'flag{internal_leaks_are_external_problems}') {
+        localStorage.setItem('solved-18', true);
+        document.getElementById('result').textContent = "Correct!";
+        window.parent.postMessage({type: 'challengeSolved', id:18}, '*');
+      } else {
+        document.getElementById('result').textContent = "Not quite. There are some decoys too so be sure to check the paste closely!";
+      }
+    }
+  </script>
+</body>
+</html>
