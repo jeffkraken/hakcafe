@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Challenge 8</title>
+</head>
+<body style="background:#222; color:white; font-family:monospace; padding:20px;">
+  <h2>Challenge 8: Pour Over DNS</h2>
+  <p>A breach was detected after a compromised endpoint began making strange DNS TXT record requests.</p>
+  <p>Use the replay tool to analyze the attacker’s behavior and identify the encoded flag.</p>
+
+  <button onclick="startReplay()">Start Replay</button>
+
+  <div id="replayModal" style="display:none; background:#111; padding:20px; margin-top:20px; border:1px solid #fff;">
+    <p>Monitoring DNS exfiltration attempts from 10.11.12.11...</p>
+    <ul id="logList" style="list-style-type:none; padding:0;"></ul>
+
+    <p>Remember to decode before submitting!</p>
+    <p><strong>What flag was exfiltrated?</strong></p>
+    <input type="text" id="answer" placeholder="flag{...}">
+    <button onclick="check()">Submit</button>
+    <p id="result"></p>
+  </div>
+
+  <script>
+    function startReplay() {
+      const modal = document.getElementById("replayModal");
+      const list = document.getElementById("logList");
+      modal.style.display = "block";
+      list.innerHTML = "";
+
+      const logs = [
+        'DNS TXT Lookup: ZmxhZ3t0aGVfdGVhX2lzX2hvdH0=.coffee-shop.attacker.net',
+        'DNS TXT Lookup: dXNlcm5hbWU6IGFkbWlu.c2.attacker.net',
+        'DNS TXT Lookup: cGFzc3dvcmQ6IGNvZmZlZTIwMjM=.d3.attacker.net',
+        'DNS TXT Lookup: ZmxhZ3ttb3JuaW5nX2xhdHRlc30=.fakenote.attacker.net',
+        'DNS TXT Lookup: ZmxhZ3tnZXQfeW91cl9ncmluZA==.weird.attacker.net',
+        'DNS TXT Lookup: ZmxhZ3t0aGVfY29mZmVlX2lzX3N0cm9uZ30=.main.exfil.attacker.net',
+        'DNS TXT Lookup: ZmxhZ3tnb2ZfYnJlYWt9.distract.attacker.net'
+      ];
+
+      let i = 0;
+      const interval = setInterval(() => {
+        const li = document.createElement("li");
+        li.textContent = `Captured: ${logs[i]}`;
+        list.appendChild(li);
+        i++;
+        if (i >= logs.length) clearInterval(interval);
+      }, 900);
+    }
+
+    function check() {
+      const val = document.getElementById('answer').value.trim().toLowerCase();
+      if (val === 'flag{the_coffee_is_strong}') {
+        localStorage.setItem('solved-17', true);
+        document.getElementById('result').textContent = "Well done!";
+        window.parent.postMessage({type: 'challengeSolved', id:17}, '*');
+      } else {
+        document.getElementById('result').textContent = "Nope. Look again at what was encoded and sent out.";
+      }
+    }
+    </script>
+</body>
+</html>
