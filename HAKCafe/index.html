@@ -9,26 +9,18 @@
   <h1>☕ HAKCafe Vuln Site</h1>
   <p>Click a tile to start your caffeinated challenge!</p>
 
-  <div class="grid">
-    <!-- Tiles will be populated by JS or hardcoded here -->
-    <div class="tile" data-id="1">Challenge 1</div>
-    <div class="tile" data-id="2">Challenge 2</div>
-    <div class="tile" data-id="3">Challenge 3</div>
-    <div class="tile" data-id="4">Challenge 4</div>
-    <div class="tile" data-id="5">Challenge 5</div>
-    <div class="tile" data-id="6">Challenge 6</div>
-    <div class="tile" data-id="7">Challenge 7</div>
-    <div class="tile" data-id="8">Challenge 8</div>
-    <div class="tile" data-id="9">Challenge 9</div>
+  <button onclick="refreshTiles()">Refresh Tiles</button>
+  <div class="grid" id="tile-grid">
+    <!-- Tiles inserted by script.js -->
   </div>
-
+  
   <div id="status"></div>
 
   <!-- Challenge Container -->
-<div id="challenge-container" style="display: none; position: fixed; bottom: 0; left: 0; width: 100%; height: 50vh; background: #111; z-index: 1000;">
-  <button onclick="closeChallenge()" style="position: absolute; top: 5px; right: 10px; z-index: 1001;">Close</button>
-  <iframe id="challenge-frame" src="" style="width: 100%; height: 100%; border: none;"></iframe>
-</div>
+  <div id="challenge-container" style="display: none; position: fixed; bottom: 0; left: 0; width: 100%; height: 50vh; background: #111; z-index: 1000;">
+    <button onclick="closeChallenge()" style="position: absolute; top: 5px; right: 10px; z-index: 1001;">Close</button>
+    <iframe id="challenge-frame" src="" style="width: 100%; height: 100%; border: none;"></iframe>
+  </div>
 
   <script src="script.js"></script>
 </body>
