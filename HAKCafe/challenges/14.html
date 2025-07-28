@@ -59,7 +59,7 @@
       const val = document.getElementById('answer').value;
       if (val === 'd') {
         localStorage.setItem('solved-14', true);
-        document.getElementById('result').textContent = "Correct! The admin panel was exposed to the internet with default credentials.";
+        document.getElementById('result').textContent = "Correct!";
         window.parent.postMessage({type: 'challengeSolved', id:14}, '*');
       } else if (val === b) {
         document.getElementById('result').textContent = "WEP is bad, but this attack didn’t rely on wireless encryption.";
