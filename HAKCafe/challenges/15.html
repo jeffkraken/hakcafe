@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Challenge 15</title>
+</head>
+<body style="background:#222; color:white; font-family:monospace; padding:20px;">
+  <h2>Challenge 6: Remote Coffee Execution</h2>
+  <p>An attacker discovered an RCE vulnerability in a development interface.</p>
+  <p>Using command injection, they were able to explore the server and locate sensitive credentials.</p>
+  <p>Use the command replay below to investigate what they found.</p>
+
+  <button onclick="startReplay()">Replay Exploit</button>
+
+  <div id="replayModal" style="display:none; background:#111; padding:20px; margin-top:20px; border:1px solid #fff;">
+    <p>Replaying commands executed via RCE...</p>
+    <ul id="replayList" style="list-style-type:none; padding:0;"></ul>
+
+    <p><strong>What information did the attacker discover?</strong></p>
+    <select id="answer">
+      <option value="">-- Choose an answer --</option>
+      <option value="network_map">Internal Network Map</option>
+      <option value="sql_dump">SQL Database Dump</option>
+      <option value="ssh_key">SSH Private Key</option>
+      <option value="credentials_file">Stored Credentials File</option>
+    </select>
+    <button onclick="check()">Submit</button>
+    <p id="result"></p>
+  </div>
+
+  <script>
+    function startReplay() {
+      const modal = document.getElementById("replayModal");
+      const list = document.getElementById("replayList");
+      modal.style.display = "block";
+      list.innerHTML = "";
+
+      const steps = [
+        "Input received: ; whoami",
+        "Output: www-data",
+        "Input received: ; ls /var/www/",
+        "Output: index.php, login.php, dev_notes.txt",
+        "Input received: ; cat /var/www/dev_notes.txt",
+        "Output: TODO: move creds.txt to secure folder",
+        "Input received: ; find / -name creds.txt 2>/dev/null",
+        "Output: /home/barista/creds.txt",
+        "Input received: ; cat /home/barista/creds.txt",
+        "Output: barista:coffee4life"
+      ];
+
+      let i = 0;
+      const interval = setInterval(() => {
+        const li = document.createElement("li");
+        li.textContent = `RCE Log: ${steps[i]}`;
+        list.appendChild(li);
+        i++;
+        if (i >= steps.length) clearInterval(interval);
+      }, 850);
+    }
+
+    function check() {
+      const val = document.getElementById('answer').value;
+      if (val === 'credentials_file') {
+        localStorage.setItem('solved-15', true);
+        document.getElementById('result').textContent = "Correct!.";
+        window.parent.postMessage({type: 'challengeSolved', id:15}, '*');
+      } else {
+        document.getElementById('result').textContent = "Not quite. Pay attention to what file they were after.";
+      }
+    }
+  </script>
+</body>
+</html>
