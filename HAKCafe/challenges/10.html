@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Challenge 10</title>
+</head>
+<body style="background:#222; color:white; font-family:monospace; padding:20px;">
+  <h2>Challenge 10: Reverse Roast</h2>
+  <p>During a network security audit, several suspicious logs were identified.</p>
+  <p>Review the following valid host addresses and then replay the network traffic to identify the source of the suspicious traffic.</p>
+
+<dl>
+  <dt>Host Address: 192.168.68.1</dt>
+  <dd>- Gateway/Firewall</dd>
+  <dt>Host Address: 192.168.68.2</dt>
+  <dd>- Proxied File Server</dd>
+  <dt>Host Address: 192.168.68.3</dt>
+  <dd>- Local Printer</dd>
+  <dt>Host Address: 192.168.68.10</dt>
+  <dd>- Marketing Workstation</dd>
+</dl> 
+    <p>After reviewing the valid host addresses, use the following tool to replay network traffic.</p>
+
+<h3>Network Traffic Capture</h3>
+<button onclick="startReplay()">Start Replay</button>
+
+<div id="replayModal" style="display:none; background:#111; padding:20px; margin-top:20px; border:1px solid #fff;">
+  <p>Replaying captured traffic...</p>
+  <ul id="trafficList" style="list-style-type:none; padding:0;"></ul>
+  <p><strong>What is the source of the suspicious traffic on the local network?</strong></p>
+  <input type="text" id="answer" placeholder="Host Address">
+  <button onclick="check()">Submit</button>
+  <p id="result"></p>
+</div>
+
+<script>
+  function startReplay() {
+    const modal = document.getElementById("replayModal");
+    const list = document.getElementById("trafficList");
+    modal.style.display = "block";
+    list.innerHTML = "";
+
+    const sources = ["2.213.250.45", "192.168.68.2", "192.168.68.1", "192.168.68.3", "192.168.68.10"];
+    const protocols = ["rdp", "unknown", "unknown", "snmp", "ssh"]
+    const ports = ["3389", "1080", "1080", "162", "22"]
+    const dests = ["192.168.68.10", "10.11.12.13", "192.168.68.2", "192.168.68.1", "192.168.68.1"]
+    let i = 0;
+    const interval = setInterval(() => {
+      const li = document.createElement("li");
+      li.textContent = `Detected: ${sources[i]} used ${protocols[i]} over ${ports[i]} to connect to ${dests[i]}`;
+      list.appendChild(li);
+      i++;
+      if (i >= sources.length) clearInterval(interval);
+    }, 800);
+  }
+
+  function check() {
+     const val = document.getElementById('answer').value.trim().toLowerCase();
+  if (val === '192.168.68.10') {
+    localStorage.setItem('solved-10', true);
+    document.getElementById('result').textContent = "Correct!";
+    window.parent.postMessage({type: 'challengeSolved', id:10}, '*');
+      } else if (val === '2.213.250.45') {
+        document.getElementById('result').textContent = "You're close! But we're looking for the host on the local network, not the public IP.";
+      } else {
+        document.getElementById('result').textContent = "Hmmm... that's not quite right... Try again!";
+      }
+    }
+</script>
+</body>
+</html>
