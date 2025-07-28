@@ -17,10 +17,10 @@
     <p><strong>What kind of malicious behavior is this?</strong></p>
     <select id="answer">
       <option value="">-- Choose an answer --</option>
-      <option value="keylogger">Keylogger</option>
-      <option value="reverse_shell">Reverse Shell</option>
-      <option value="ransomware">Ransomware</option>
-      <option value="ddos">DDoS</option>
+      <option value="a">Keylogger</option>
+      <option value="b">Reverse Shell</option>
+      <option value="c">Ransomware</option>
+      <option value="d">DDoS</option>
     </select>
     <button onclick="check()">Submit</button>
     <p id="result"></p>
@@ -58,7 +58,7 @@
 
     function check() {
       const val = document.getElementById('answer').value;
-      if (val === 'ddos') {
+      if (val === 'd') {
         localStorage.setItem('solved-13', true);
         document.getElementById('result').textContent = "Correct!.";
         window.parent.postMessage({type: 'challengeSolved', id:13}, '*');
