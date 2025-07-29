@@ -10,9 +10,9 @@ This project simulates a basic challenge environment with clickable tiles that m
 
 - Clickable challenge grid with 9 tiles
 - Currently includes 18 different challenges.
-- - CTF-style challenges that require a found flag for completion.
-- - Multiple-choice-style challenges that require selecting an answer from a dropdown menu.
-- - Short answer challenges that require typing out a port, user, or file name.
+  - CTF-style challenges that require a found flag for completion.
+  - Multiple-choice-style challenges that require selecting an answer from a dropdown menu.
+  - Short answer challenges that require typing out a port, user, or file name.
 - `refresh-tiles` button that swaps the current tiles with 9 random tiles
 - Simple UI with dark mode styling
 - Custom status output area
