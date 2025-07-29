@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Challenge 25</title>
+  <style>
+    body {
+      background: #222;
+      color: white;
+      font-family: monospace;
+      padding: 20px;
+    }
+
+    .service {
+      background: #111;
+      border: 1px solid #555;
+      padding: 10px;
+      margin-bottom: 10px;
+      cursor: pointer;
+    }
+
+    .details {
+      margin-top: 5px;
+      color: #ccc;
+      display: none;
+    }
+
+    #answerSection {
+      background: #111;
+      padding: 15px;
+      margin-top: 30px;
+      border: 1px solid #fff;
+    }
+
+    select, button {
+      font-family: monospace;
+      padding: 5px 10px;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <h2>Challenge 25: Mocha Misquote</h2>
+  <p>Review the running Windows services below and identify which one is vulnerable to unquoted service path exploitation.</p>
+
+  <div class="service" onclick="toggleDetails('svc1')">
+    [✓] Print Helper Service
+    <div class="details" id="svc1">
+      Executable Path: <code>"C:\Program Files\PrintHelper\printsvc.exe"</code><br>
+      Description: Used for managing print jobs.
+    </div>
+  </div>
+
+  <div class="service" onclick="toggleDetails('svc2')">
+    [✓] Vulnerable Update Service
+    <div class="details" id="svc2">
+      Executable Path: <code>C:\Program Files\Vuln Update\updatesvc.exe</code><br>
+      Description: Automatic updates.<br>
+      Note: The parent folder <code>C:\Program Files</code> is writable by all users.
+    </div>
+  </div>
+
+  <div class="service" onclick="toggleDetails('svc3')">
+    [✓] User Backup Agent
+    <div class="details" id="svc3">
+      Executable Path: <code>"C:\ProgramData\Backup\backup.exe"</code><br>
+      Description: Scheduled user file backup.
+    </div>
+  </div>
+
+  <div id="answerSection">
+    <p><strong>Which service is vulnerable to unquoted service path execution?</strong></p>
+    <select id="answer">
+      <option value="">-- Choose an answer --</option>
+      <option value="1">Print Helper Service</option>
+      <option value="2">Vulnerable Update Service</option>
+      <option value="3">User Backup Agent</option>
+    </select>
+    <button onclick="submitAnswer()">Submit</button>
+    <p id="result"></p>
+  </div>
+
+  <script>
+    function toggleDetails(id) {
+      const el = document.getElementById(id);
+      el.style.display = el.style.display === 'block' ? 'none' : 'block';
+    }
+
+    function submitAnswer() {
+      const val = document.getElementById('answer').value;
+      const result = document.getElementById('result');
+
+      if (val === "2") {
+        localStorage.setItem('solved-25', true);
+        result.textContent = "Correct!";
+        window.parent.postMessage({type: 'challengeSolved', id: 25}, '*');
+      } else if (val == "") {
+        result.textContent = "Please select a service.";
+      } else {
+        result.textContent = "That's not the vulnerable service. Look for unquoted paths and writable folders.";
+      }
+    }
+  </script>
+</body>
+</html>
