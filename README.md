@@ -9,7 +9,7 @@ This project simulates a basic challenge environment with clickable tiles that m
 ## Features
 
 - Clickable challenge grid with 9 tiles
-- Currently includes 18 different challenges.
+- Currently includes 27 different challenges.
   - CTF-style challenges that require a found flag for completion.
   - Multiple-choice-style challenges that require selecting an answer from a dropdown menu.
   - Short answer challenges that require typing out a port, user, or file name.
@@ -23,6 +23,6 @@ This project simulates a basic challenge environment with clickable tiles that m
 
 ## TO-DO
 
-- Add third set of challenges (bring total to 27)
+- Add fourth set of challenges (bring total to 36)
 - Add `keep-going` button to allow refresh to new tiles that haven't been completed yet without clearing out progress.
 - Add `submit-score` button to create a pdf file that shows which challenges were completed by the user.
