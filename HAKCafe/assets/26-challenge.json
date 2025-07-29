@@ -1,0 +1,33 @@
+[
+  {
+    "ip": "192.168.1.10",
+    "hostname": "workstation-01",
+    "ports": [
+      { "port": 22, "service": "ssh" },
+      { "port": 3389, "service": "rdp" }
+    ]
+  },
+  {
+    "ip": "192.168.1.20",
+    "hostname": "dev-server",
+    "ports": [
+      { "port": 22, "service": "ssh" },
+      { "port": 3000, "service": "nodejs-dev" }
+    ]
+  },
+  {
+    "ip": "192.168.1.30",
+    "hostname": "printer-01",
+    "ports": [
+      { "port": 9100, "service": "jetdirect" }
+    ]
+  },
+  {
+    "ip": "192.168.1.50",
+    "hostname": "db-server",
+    "ports": [
+      { "port": 1433, "service": "mssql" },
+      { "port": 3389, "service": "rdp" }
+    ]
+  }
+]
