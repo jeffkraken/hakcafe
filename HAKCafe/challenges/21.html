@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Challenge 21</title>
+</head>
+<body style="background:#222; color:white; font-family:monospace; padding:20px;">
+  <h2>Challenge 21: 16oz Hot Forensics with Caramel</h2>
+  <p>Unusual activity has been reported on the web server.</p>
+  <p>Your task is to identify the IP address that successfully accessed the <code>/admin</code> panel.</p>
+  <p>Replay the SOC alert to retrieve the logs and investigate.</p>
+
+  <button onclick="startReplay()">Download Logs</button>
+
+  <div id="replayModal" style="display:none; background:#111; padding:20px; margin-top:20px; border:1px solid #fff;">
+    <p>Simulating incident report...</p>
+    <ul id="attackList" style="list-style-type:none; padding:0;"></ul>
+
+    <p><strong>Which IP address successfully accessed <code>/admin</code>?</strong></p>
+    <select id="answer">
+      <option value="">-- Choose an answer --</option>
+      <option value="127.0.0.1">127.0.0.1</option>
+      <option value="192.168.1.10">192.168.1.10</option>
+      <option value="198.51.100.7">198.51.100.7</option>
+      <option value="203.0.113.5">203.0.113.5</option>
+    </select>
+    <button onclick="check()">Submit</button>
+    <p id="result"></p>
+  </div>
+
+  <script>
+    function startReplay() {
+      const modal = document.getElementById("replayModal");
+      const list = document.getElementById("attackList");
+      modal.style.display = "block";
+      list.innerHTML = "";
+
+      const steps = [
+        "Analyst receives alert: multiple failed logins to /admin",
+        "SOC begins log retrieval from web server",
+        "Searching logs for access to /admin endpoint...",
+        "Detected multiple 403 responses from 203.0.113.5",
+        "Final request to /admin from same IP returned 200 OK",
+        "Logs saved to /assets/logs/challenge21-access.log"
+      ];
+
+      let i = 0;
+      const interval = setInterval(() => {
+        const li = document.createElement("li");
+        li.textContent = `SOC Log: ${steps[i]}`;
+        list.appendChild(li);
+        i++;
+        if (i >= steps.length) clearInterval(interval);
+      }, 900);
+
+      // Add a clickable log file link after final step
+      setTimeout(() => {
+        const li = document.createElement("li");
+        li.innerHTML = `📄 <a href="/assets/21-access-log.txt" target="_blank">Download Access Log?</a>`;
+        list.appendChild(li);
+      }, steps.length * 900);
+    }
+
+    function check() {
+      const val = document.getElementById('answer').value;
+      if (val === '203.0.113.5') {
+        localStorage.setItem('solved-21', true);
+        document.getElementById('result').textContent = "Correct! This IP accessed the admin panel.";
+        window.parent.postMessage({type: 'challengeSolved', id:21}, '*');
+      } else {
+        document.getElementById('result').textContent = "Not quite. Look for the IP that finally got a 200 OK.";
+      }
+    }
+  </script>
+</body>
+</html>
