@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Challenge 23</title>
+  <style>
+    body {background: #222; color: white; font-family: monospace; padding: 20px;}
+
+    #terminal {background: #111; border: 1px solid #555; padding: 15px; height: 300px; overflow-y: auto; margin-bottom: 20px;}
+
+    .input-line {display: flex; gap: 5px; margin-top: 10px;}
+
+    input[type="text"] {background: #333; color: white; border: none; padding: 5px; flex: 1;}
+
+    button {font-family: monospace; background: #555; color: white; border: none; padding: 5px 10px; cursor: pointer;}
+
+    #answerSection {margin-top: 30px; background: #111; padding: 20px; border: 1px solid #fff;}
+  </style>
+</head>
+<body>
+  <h2>Challenge 23: Permissions as Dangerous as *bux Wifi</h2>
+  <p>Use the terminal below to investigate the files in <code>/home/app/files</code>.</p>
+  <p> Available commands: <code>ls, ls -l, cat</code></p>
+  <p>Identify which file is vulnerable due to improper permissions.</p>
+
+  <div id="terminal">
+    <div>> Try running: <code>ls /home/app/files</code></div>
+  </div>
+
+  <div class="input-line">
+    <span>$</span>
+    <input type="text" id="commandInput" placeholder="Enter Linux command">
+    <button onclick="handleCommand()">Run</button>
+  </div>
+
+  <div id="answerSection">
+    <p><strong>Which file is vulnerable?</strong></p>
+    <input type="text" id="fileName" placeholder="e.g., config.yaml">
+    <p>Is it vulnerable?</p>
+    <label><input type="radio" name="vuln" value="yes"> Yes</label>
+    <label><input type="radio" name="vuln" value="no"> No</label>
+    <br><br>
+    <button onclick="submitAnswer()">Submit</button>
+    <p id="result"></p>
+  </div>
+
+  <script>
+    const terminal = document.getElementById('terminal');
+    const commands = {
+      "ls /home/app/files": "script.sh  config.yaml  db.sqlite  secret.key  update.log",
+      "ls -l /home/app/files": `-rwxr-xr-x 1 root root 4096 Jul 29 12:00 script.sh
+-rw-r--r-- 1 app  app  2100 Jul 29 12:00 config.yaml
+-rw-rw-r-- 1 app  app  8500 Jul 29 12:01 db.sqlite
+-rw------- 1 root root  512 Jul 29 12:02 secret.key
+-rw-rw-rw- 1 root root 1024 Jul 29 12:03 update.log`,
+      "cat /home/app/files/update.log": "[LOG] System updated.\n[WARN] Writable by all users.",
+      "cat /home/app/files/secret.key": "Permission denied",
+    };
+
+    function handleCommand() {
+      const input = document.getElementById('commandInput');
+      const value = input.value.trim();
+      const output = document.createElement('div');
+      output.innerHTML = `$ ${value}`;
+      terminal.appendChild(output);
+
+      const response = document.createElement('div');
+      if (commands[value]) {
+        response.textContent = commands[value];
+      } else {
+        response.textContent = `bash: ${value}: command not found or permission denied`;
+      }
+
+      terminal.appendChild(response);
+      terminal.scrollTop = terminal.scrollHeight;
+      input.value = "";
+    }
+
+    function submitAnswer() {
+      const file = document.getElementById('fileName').value.trim().toLowerCase();
+      const radios = document.getElementsByName('vuln');
+      let selected = null;
+      for (const r of radios) {
+        if (r.checked) selected = r.value;
+      }
+
+      const result = document.getElementById('result');
+      if (file === "update.log" && selected === "yes") {
+        localStorage.setItem('solved-23', true);
+        result.textContent = "Correct!";
+        window.parent.postMessage({type: 'challengeSolved', id: 23}, '*');
+      } else if (!file || !selected) {
+        result.textContent = "Please complete both fields.";
+      } else {
+        result.textContent = "Incorrect. Try again — check those permissions carefully.";
+      }
+    }
+  </script>
+</body>
+</html>
