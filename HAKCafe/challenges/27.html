@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Challenge 27</title>
+</head>
+<body style="background:#222; color:white; font-family:monospace; padding:20px; text-align:center;">
+  <h2>Challenge 27: A Picture's Worth a Thousand Brews</h2>
+  <p>Investigators recovered the following image from a compromised machine.</p>
+  <p>They believe someone embedded a flag or hidden message in it. See what you can find...</p>
+
+  <img src="../assets/27-image.png" alt="Suspicious Image" style="max-width:80%; border: 1px solid #fff; margin: 20px 0;">
+
+  <p><em>You might need to download and inspect this image with external tools.</em></p>
+
+  <input type="text" id="answer" placeholder="Enter the hidden flag" style="width:300px; padding:5px;">
+  <button onclick="check()">Submit</button>
+  <p id="result"></p>
+
+  <script>
+    function xorDecode(data, key) {
+      return data.map(c => String.fromCharCode(c ^ key)).join('');
+    }
+    const xorKey = 42;
+    const encodedFlag = [76, 70, 75, 77, 85, 86, 68, 71, 71, 69, 79, 64, 71, 69, 7, 68, 70, 70, 71];
+
+    function check() {
+      const val = document.getElementById('answer').value.trim().toLowerCase();
+      const decoded = xorDecode(encodedFlag, xorKey).toLowerCase();
+
+      if (val === decoded) {
+        localStorage.setItem('solved-27', true);
+        document.getElementById('result').textContent = "Correct!";
+        window.parent.postMessage({type: 'challengeSolved', id: 27}, '*');
+      } else {
+        document.getElementById('result').textContent = "Not quite. Try looking at metadata, file contents, or pixel data... exif might help";
+      }
+    }
+  </script>
+</body>
+</html>
