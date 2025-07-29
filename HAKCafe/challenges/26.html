@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Challenge 26</title>
+  <style>
+    body {
+      background: #222;
+      color: white;
+      font-family: monospace;
+      padding: 20px;
+    }
+
+    #output {
+      background: #111;
+      border: 1px solid #555;
+      padding: 15px;
+      height: 300px;
+      overflow-y: auto;
+      white-space: pre;
+      margin-bottom: 20px;
+    }
+
+    #answerSection {
+      background: #111;
+      padding: 20px;
+      border: 1px solid #fff;
+    }
+
+    select, button {
+      font-family: monospace;
+      font-size: 14px;
+      padding: 5px 10px;
+    }
+  </style>
+</head>
+<body>
+  <h2>Challenge 26: Tinker, Tailor, Brewer, Scanner.</h2>
+  <p>Use the scanner to inspect the internal infrastructure and identify which host is running a development service exposed to the network.</p>
+
+  <button onclick="runScan()">Run Scan</button>
+
+  <div id="output">Scanner ready...</div>
+
+  <div id="answerSection">
+    <p><strong>Which host is exposing a development service?</strong></p>
+    <select id="answer">
+      <option value="">-- Choose a host --</option>
+      <option value="d">192.168.1.10 (workstation-01)</option>
+      <option value="c">192.168.1.20 (dev-server)</option>
+      <option value="b">192.168.1.30 (printer-01)</option>
+      <option value="a">192.168.1.50 (db-server)</option>
+    </select>
+    <button onclick="submitAnswer()">Submit</button>
+    <p id="result"></p>
+  </div>
+
+  <script>
+    async function runScan() {
+      const output = document.getElementById("output");
+      output.textContent = "Scanning network...\n\n";
+
+      try {
+        const res = await fetch("../assets/infrastructure/challenge26-network.json");
+        const hosts = await res.json();
+
+        hosts.forEach(host => {
+          output.textContent += `Host: ${host.ip} (${host.hostname})\n`;
+          host.ports.forEach(p => {
+            output.textContent += `  Port ${p.port}/tcp open  ${p.service}\n`;
+          });
+          output.textContent += `\n`;
+        });
+
+      } catch (err) {
+        output.textContent += "Error loading scan data.";
+        console.error(err);
+      }
+    }
+
+    function submitAnswer() {
+      const val = document.getElementById('answer').value;
+      const result = document.getElementById('result');
+
+      if (val === "c") {
+        localStorage.setItem('solved-26', true);
+        result.textContent = "Correct!";
+        window.parent.postMessage({type: 'challengeSolved', id: 26}, '*');
+      } else if (val == "") {
+        result.textContent = "Please choose a host.";
+      } else {
+        result.textContent = "That host is not exposing a development service.";
+      }
+    }
+  </script>
+</body>
+</html>
