@@ -1,4 +1,4 @@
-const totalChallenges = 18;
+const totalChallenges = 27;
 const visibleCount = 9;
 
 function getRandomChallenges() {
