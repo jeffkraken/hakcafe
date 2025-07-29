@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Challenge 22</title>
+  <style>
+    body {background: #222; color: white; font-family: monospace; padding: 20px;}
+
+    .node-grid {display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 30px;}
+
+    .node {background: #444; border: 2px solid #888; padding: 20px; text-align: center; cursor: pointer; transition: background 0.3s;}
+
+    .node:hover {background: #555;}
+
+    #feedback {margin-top: 20px; min-height: 40px; font-weight: bold;}
+
+    #submitSection {margin-top: 30px; background: #111; padding: 20px; border: 1px solid #fff;}
+
+    select, button {font-family: monospace; font-size: 14px; padding: 5px 10px;}
+  </style>
+</head>
+<body>
+  <h2>Challenge 22: Everything Bagel Sandwich (including Network Recon)</h2>
+  <p>You’ve been alerted to suspicious behavior in the internal network.</p>
+  <p>Click on each node to gather clues, then select the compromised system below.</p>
+
+  <div class="node-grid">
+    <div class="node" onclick="checkNode(1)">WebServer-A</div>
+    <div class="node" onclick="checkNode(2)">FileShare-1</div>
+    <div class="node" onclick="checkNode(3)">VPN-Gateway</div>
+    <div class="node" onclick="checkNode(4)">Database-01</div>
+    <div class="node" onclick="checkNode(5)">WebServer-B</div>
+    <div class="node" onclick="checkNode(6)">LogCollector</div>
+  </div>
+
+  <p id="feedback"></p>
+
+  <div id="submitSection">
+    <p><strong>Which system was compromised through a SQL injection attack?</strong></p>
+    <select id="answer">
+      <option value="">-- Choose an answer --</option>
+      <option value="a">WebServer-A</option>
+      <option value="b">FileShare-1</option>
+      <option value="c">VPN-Gateway</option>
+      <option value="d">Database-01</option>
+      <option value="e">WebServer-B</option>
+      <option value="f">LogCollector</option>
+    </select>
+    <button onclick="submitAnswer()">Submit</button>
+    <p id="result"></p>
+  </div>
+
+  <script>
+    function checkNode(id) {
+      const feedback = document.getElementById("feedback");
+      switch (id) {
+        case 1:
+          feedback.textContent = "WebServer-A is serving static files only. No login forms or input fields detected.";
+          break;
+        case 2:
+          feedback.textContent = "FileShare-1 handles internal backups via SMB. No web interface available.";
+          break;
+        case 3:
+          feedback.textContent = "VPN-Gateway shows normal connection logs from authorized employees.";
+          break;
+        case 4:
+          feedback.textContent = "Database-01 shows repeated access to /login.php using payloads like ' OR '1'='1.";
+          break;
+        case 5:
+          feedback.textContent = "WebServer-B returns 403 Forbidden for most requests. No anomalies found.";
+          break;
+        case 6:
+          feedback.textContent = "LogCollector was offline during the time of the alert. No logs were captured.";
+          break;
+      }
+    }
+
+    function submitAnswer() {
+      const val = document.getElementById('answer').value;
+      const result = document.getElementById('result');
+
+      if (val === "d") {
+        localStorage.setItem('solved-22', true);
+        result.textContent = "Correct!";
+        window.parent.postMessage({type: 'challengeSolved', id: 22}, '*');
+      } else if (val === "") {
+        result.textContent = "Please select a system from the dropdown.";
+      } else {
+        result.textContent = "That’s not the compromised system. Review the clues again.";
+      }
+    }
+  </script>
+</body>
+</html>
