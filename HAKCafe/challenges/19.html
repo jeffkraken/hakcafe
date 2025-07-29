@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Challenge 19</title>
+</head>
+<body style="background:#222; color:white; font-family:monospace; padding:20px;">
+  <h2>Challenge 19: Light Roast of the Console</h2>
+  <p>Looks like this page is under construction... or is it?</p>
+  <p>Maybe something is hiding in the console. 🤔</p>
+
+  <input type="text" id="answer" placeholder="your invite code">
+  <button onclick="check()">Submit</button>
+  <p id="result"></p>
+
+  <script src="../assets/secrets/invite.min.js"></script>
+
+  <script>
+    function decode(b64) {
+      return atob(b64);
+    }
+
+    function check() {
+      const val = document.getElementById('answer').value.trim();
+      const hidden = "ZmxhZ3tpbnZpdGUtY29kZS0xMjN9";
+      const expected = decode(hidden);
+
+      if (val === expected) {
+        localStorage.setItem('solved-19', true);
+        document.getElementById('result').textContent = "Code accepted!";
+        window.parent.postMessage({type: 'challengeSolved', id: '19'}, '*');
+      } else {
+        document.getElementById('result').textContent = "Invalid code!";
+      }
+    }
+  </script>
+</body>
+</html>
