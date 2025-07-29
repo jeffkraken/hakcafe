@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Challenge 20</title>
+</head>
+<body style="background:#222; color:white; font-family:monospace; padding:20px;">
+  <h2>Challenge 20: 12oz Iced Subdomain</h2>
+  <p>Analysts have been investigating suspicious queries and web access logs.</p>
+  <p>Use the replay tool below to walk through the steps taken by the attacker. </p>
+  <p>Then identify what vulnerability exposed the sensitive data.</p>
+
+  <button onclick="startReplay()">Replay Recon</button>
+
+  <div id="replayModal" style="display:none; background:#111; padding:20px; margin-top:20px; border:1px solid #fff;">
+    <p>Replaying attacker recon and enumeration...</p>
+    <ul id="attackList" style="list-style-type:none; padding:0;"></ul>
+
+    <p><strong>What misconfiguration allowed the attacker to access the flag?</strong></p>
+    <select id="answer">
+      <option value="">-- Choose an answer --</option>
+      <option value="a">Directory Listing Enabled</option>
+      <option value="b">Open CORS Policy</option>
+      <option value="c">Leaked API Key</option>
+      <option value="d">Unrestricted Subdomain Access</option>
+    </select>
+    <button onclick="check()">Submit</button>
+    <p id="result"></p>
+  </div>
+
+  <script>
+    function startReplay() {
+      const modal = document.getElementById("replayModal");
+      const list = document.getElementById("attackList");
+      modal.style.display = "block";
+      list.innerHTML = "";
+
+      const steps = [
+        "Attacker initiates subdomain brute-force on cyber.goblin",
+        "Discovered dev.kraken.training via DNS response",
+        "HTTP request made to http://dev.cyber.goblin",
+        "Response header: X-Environment: staging",
+        "HTML content contains: <!-- TODO: remove flag before launch -->",
+        "Page displays internal dev tools and a debug panel",
+        "JavaScript console reveals: flag{internal-access-success}",
+        "Attacker captures screenshot and extracts flag"
+      ];
+
+      let i = 0;
+      const interval = setInterval(() => {
+        const li = document.createElement("li");
+        li.textContent = `Replay Log: ${steps[i]}`;
+        list.appendChild(li);
+        i++;
+        if (i >= steps.length) clearInterval(interval);
+      }, 900);
+    }
+
+    function check() {
+      const val = document.getElementById('answer').value;
+      if (val === 'd') {
+        localStorage.setItem('solved-20', true);
+        document.getElementById('result').textContent = "Correct! The dev subdomain exposed sensitive data.";
+        window.parent.postMessage({type: 'challengeSolved', id:20}, '*');
+      } else if (val === 'c') {
+        document.getElementById('result').textContent = "Not quite. No keys were exposed in this attack.";
+      } else {
+        document.getElementById('result').textContent = "Try again. Focus on how the attacker found the flag.";
+      }
+    }
+  </script>
+</body>
+</html>
