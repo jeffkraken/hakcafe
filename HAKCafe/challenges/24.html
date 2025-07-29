@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Challenge 24</title>
+</head>
+<body style="background:#222; color:white; font-family:monospace; padding:20px;">
+  <h2>Challenge 24: Brewed Bypass</h2>
+  <p>This coffee shop's login page might need a security audit. </p>
+  <p>Try logging in as <code>barista</code>, or see if there's another way in...</p>
+
+  <div style="background:#111; padding:20px; border:1px solid #fff; width:300px;">
+    <label>Username:</label><br>
+    <input type="text" id="username" style="width:100%;"><br><br>
+
+    <label>Password:</label><br>
+    <input type="password" id="password" style="width:100%;"><br><br>
+
+    <button onclick="attemptLogin()">Login</button>
+    <p id="result"></p>
+  </div>
+
+  <script src="../assets/login.js"></script>
+</body>
+</html>
