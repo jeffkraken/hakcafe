@@ -23,6 +23,7 @@ This project simulates a basic challenge environment with clickable tiles that m
 
 ## TO-DO
 
+- Fix challenge 27. jpg instead of png
 - Add fourth set of challenges (bring total to 36)
 - Add `keep-going` button to allow refresh to new tiles that haven't been completed yet without clearing out progress.
 - Add `submit-score` button to create a pdf file that shows which challenges were completed by the user.
