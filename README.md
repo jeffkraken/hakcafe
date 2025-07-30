@@ -24,5 +24,6 @@ This project simulates a basic challenge environment with clickable tiles that m
 ## TO-DO
 
 - Add fourth set of challenges (bring total to 36)
-- Add `keep-going` button to allow refresh to new tiles that haven't been completed yet without clearing out progress.
-- Add `submit-score` button to create a pdf file that shows which challenges were completed by the user.
+- Fix commented out `keep-going` button in both index and script
+- Fix `refresh-tiles` so that it cycles in 9 unique challenges (not repeating ones that were in the last batch).
+- Fix `keep-going` so that it only cycles in unsolved challenges
