@@ -80,4 +80,39 @@ function checkSolvedTiles() {
   }
 }
 
+document.getElementById("keep-going").addEventListener("click", () => {
+    const container = document.getElementById("challenges"); // Assumes a container holds your challenge links
+    for (let i = 20; i <= 28; i++) {
+        if (!localStorage.getItem(`challenge-${i}`)) {
+            const link = document.createElement("a");
+            link.href = `challenges/${i}.html`;
+            link.textContent = `Challenge ${i}`;
+            link.className = "challenge-link";
+            container.appendChild(link);
+            container.appendChild(document.createElement("br"));
+        }
+    }
+});
+
+document.getElementById("submit-score").addEventListener("click", async () => {
+    const teamName = prompt("Enter your team name:");
+    if (!teamName) return;
+
+    const completed = [];
+    for (let i = 1; i <= 28; i++) {
+        if (localStorage.getItem(`solved-${i}`)) {
+            completed.push(`Challenge ${i}`);
+        }
+    }
+
+    const docText = `Team: ${teamName}\n\nCompleted Challenges:\n` + completed.join("\n");
+
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+    const lines = docText.split("\n");
+    lines.forEach((line, i) => doc.text(line, 10, 10 + i * 10));
+    doc.save(`${teamName}-score.pdf`);
+});
+
+
 renderTiles();
