@@ -23,7 +23,7 @@
       const val = document.getElementById('answer').value.trim();
       const hidden = "ZmxhZ3tpbnZpdGUtY29kZS0xMjN9";
       const expected = decode(hidden);
-
+// Current issue with XOR-encoding. Flag = flag{invite-code-123}
       if (val === expected) {
         localStorage.setItem('solved-19', true);
         document.getElementById('result').textContent = "Code accepted!";
