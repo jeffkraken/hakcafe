@@ -60,7 +60,7 @@
       output.textContent = "Scanning network...\n\n";
 
       try {
-        const res = await fetch("../assets/challenge26.json");
+        const res = await fetch("../assets/26-challenge.json");
         const hosts = await res.json();
 
         hosts.forEach(host => {
