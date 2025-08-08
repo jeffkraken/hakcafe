@@ -86,7 +86,7 @@ function checkSolvedTiles() {
   );
 
   if (allSolved) {
-    document.getElementById('status').textContent = "🎉 All 9 challenges complete! Try refreshing for more!";
+    document.getElementById('status').textContent = "🎉 All 9 challenges complete! Click Submit Score to generate a pdf for points! After that... Try refreshing for more!";
     setTimeout(() => refreshTiles(), 4000);
   }
 }
@@ -127,6 +127,7 @@ document.getElementById("submit-score").addEventListener("click", async () => {
 
 
 renderTiles();
+
 
 
 
