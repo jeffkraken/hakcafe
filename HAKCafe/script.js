@@ -21,6 +21,8 @@ function getChallenges() {
   for (let id = blockStart; id <= blockEnd; id++) {
     if (!isSolved(id)) ids.push(id);
   }
+  return ids;
+}
   
 
 function renderTiles() {
@@ -125,5 +127,6 @@ document.getElementById("submit-score").addEventListener("click", async () => {
 
 
 renderTiles();
+
 
 
