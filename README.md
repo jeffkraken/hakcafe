@@ -25,3 +25,4 @@ This project simulates a basic challenge environment with clickable tiles that m
 
 - Add fourth set of challenges (bring total to 36)
 - Update storage to focus on sesssions or use sqlite.
+- Make it Submit-Score can see all completed challenges, not just the current completed tiles.
