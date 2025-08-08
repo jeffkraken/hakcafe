@@ -1,19 +1,31 @@
 const totalChallenges = 27;
 const visibleCount = 9;
 
-function getRandomChallenges() {
-  const all = Array.from({ length: totalChallenges }, (_, i) => i + 1);
-  for (let i = all.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [all[i], all[j]] = [all[j], all[i]];
+function getChallenges() {
+  const isSolved = (id) => !!localStorage.getItem(`solved-${id}`);
+
+  // for when all is solved?
+  let firstUnsolved = null;
+  for (let i = 1; i <= totalChallenges; i++) {
+    if (!isSolved(i)) {firstUnsolved = i; break;}
   }
-  return all.slice(0, visibleCount);
-}
+  if (firstUnsolved === null) return [];
+
+  
+  // starting block based on unsolved challenges
+  const blockStart = Math.floor((firstUnsolved -1) / visibleCount) * visibleCount + 1;
+  const blockEnd = Math.min(blockStart + visibleCount -1, totalChallenges);
+
+  // show unsolved from block
+  const ids = [];
+  for (let id = blockStart; id <= blockEnd; id++) {
+    if (!isSolved(id)) ids.push(id);
+  
 
 function renderTiles() {
   const grid = document.getElementById('tile-grid');
   grid.innerHTML = '';
-  const selected = getRandomChallenges();
+  const selected = getChallenges();
 
   selected.forEach(id => {
     const div = document.createElement('div');
@@ -36,12 +48,8 @@ function renderTiles() {
   });
 }
 
+// refresh to unsolved challenges
 function refreshTiles() {
-  // Clear completions only for visible challenges
-  document.querySelectorAll('.tile').forEach(tile => {
-    const id = tile.dataset.id;
-    localStorage.removeItem(`solved-${id}`);
-  });
   renderTiles();
   document.getElementById('status').textContent = '';
 }
@@ -99,7 +107,7 @@ document.getElementById("submit-score").addEventListener("click", async () => {
     if (!teamName) return;
 
     const completed = [];
-    for (let i = 1; i <= 28; i++) {
+    for (let i = 1; i <= totalChallenges; i++) {
         if (localStorage.getItem(`solved-${i}`)) {
             completed.push(`Challenge ${i}`);
         }
@@ -116,3 +124,4 @@ document.getElementById("submit-score").addEventListener("click", async () => {
 
 
 renderTiles();
+
