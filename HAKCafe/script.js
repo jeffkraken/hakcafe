@@ -106,8 +106,8 @@ function checkSolvedTiles() {
 // });
 
 document.getElementById("submit-score").addEventListener("click", async () => {
-    const teamName = prompt("Enter your team name:");
-    if (!teamName) return;
+    const userName = prompt("Enter your name:");
+    if (!userName) return;
 
     const completed = [];
     for (let i = 1; i <= totalChallenges; i++) {
@@ -116,17 +116,18 @@ document.getElementById("submit-score").addEventListener("click", async () => {
         }
     }
 
-    const docText = `HAKCafe Transcript of Completion\nSubmit to info(at)cybergoblin.org for a digital badge\n\nTeam: ${teamName}\n\nCompleted Challenges:\n` + completed.join("\n");
+    const docText = `HAKCafe Transcript of Completion\nSubmit to info(at)cybergoblin.org for a digital badge\n\nTeam: ${userName}\n\nCompleted Challenges:\n` + completed.join("\n");
 
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF();
     const lines = docText.split("\n");
     lines.forEach((line, i) => doc.text(line, 10, 10 + i * 10));
-    doc.save(`${teamName}-score.pdf`);
+    doc.save(`${userName}-score.pdf`);
 });
 
 
 renderTiles();
+
 
 
 
