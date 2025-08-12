@@ -116,7 +116,7 @@ document.getElementById("submit-score").addEventListener("click", async () => {
         }
     }
 
-    const docText = `Team: ${teamName}\n\nCompleted Challenges:\n` + completed.join("\n");
+    const docText = `HAKCafe Transcript of Completion\nSubmit to info(at)cybergoblin.org for a digital badge\n\nTeam: ${teamName}\n\nCompleted Challenges:\n` + completed.join("\n");
 
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF();
@@ -127,6 +127,7 @@ document.getElementById("submit-score").addEventListener("click", async () => {
 
 
 renderTiles();
+
 
 
 
