@@ -109,6 +109,7 @@ document.getElementById("submit-score").addEventListener("click", async () => {
     const userName = prompt("Enter your name:");
     if (!userName) return;
 
+    // Gather completed challenges from localStorage
     const completed = [];
     for (let i = 1; i <= totalChallenges; i++) {
         if (localStorage.getItem(`solved-${i}`)) {
@@ -116,17 +117,44 @@ document.getElementById("submit-score").addEventListener("click", async () => {
         }
     }
 
-    const docText = `HAKCafe Transcript of Completion\nSubmit to info(at)cybergoblin.org for a digital badge\n\nUser: ${userName}\n\nCompleted Challenges:\n` + completed.join("\n");
+    const docText =
+        `HAKCafe Transcript of Completion\n` +
+        `Submit to info(at)cybergoblin.org for a digital badge\n\n` +
+        `User: ${userName}\n\n` +
+        `Completed Challenges:\n` +
+        (completed.length ? completed.join("\n") : "None yet");
 
     const { jsPDF } = window.jspdf;
+
     const doc = new jsPDF();
-    const lines = docText.split("\n");
-    lines.forEach((line, i) => doc.text(line, 10, 10 + i * 10));
-    doc.save(`${userName}-score.pdf`);
+
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const pageHeight = doc.internal.pageSize.getHeight();
+    const margin = 10;
+    const lineHeight = 10;
+    const maxWidth = pageWidth - margin * 2;
+
+    const wrappedLines = docText
+        .split("\n")
+        .flatMap(line => doc.splitTextToSize(line, maxWidth));
+
+
+    let y = margin + lineHeight;
+    for (const line of wrappedLines) {
+        if (y > pageHeight - margin) {
+            doc.addPage();
+            y = margin + lineHeight;
+        }
+        doc.text(line, margin, y);
+        y += lineHeight;
+    }
+
+    const safeName = String(userName).replace(/[^\w\-]+/g, "_");
+    doc.save(`${safeName}-score.pdf`);
 });
 
-
 renderTiles();
+
 
 
 
