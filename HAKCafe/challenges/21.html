@@ -18,10 +18,10 @@
     <p><strong>Which IP address successfully accessed <code>/admin</code>?</strong></p>
     <select id="answer">
       <option value="">-- Choose an answer --</option>
-      <option value="127.0.0.1">127.0.0.1</option>
-      <option value="192.168.1.10">192.168.1.10</option>
-      <option value="198.51.100.7">198.51.100.7</option>
-      <option value="203.0.113.5">203.0.113.5</option>
+      <option value="a">127.0.0.1</option>
+      <option value="b">192.168.1.10</option>
+      <option value="c">198.51.100.7</option>
+      <option value="d">203.0.113.5</option>
     </select>
     <button onclick="check()">Submit</button>
     <p id="result"></p>
@@ -37,7 +37,9 @@
       const steps = [
         "Analyst receives alert: multiple failed logins to /admin",
         "SOC begins log retrieval from web server",
+        "Web Server reporting through 127.0.0.1 to 192.168.1.10"
         "Searching logs for access to /admin endpoint...",
+        "Detected multiple DNS queries to 1.1.1.1 instead of 8.8.4.4",
         "Detected multiple 403 responses from 203.0.113.5",
         "Final request to /admin from same IP returned 200 OK",
         "Logs saved to /assets/logs/challenge21-access.log"
@@ -62,7 +64,7 @@
 
     function check() {
       const val = document.getElementById('answer').value;
-      if (val === '203.0.113.5') {
+      if (val === 'd') {
         localStorage.setItem('solved-21', true);
         document.getElementById('result').textContent = "Correct! This IP accessed the admin panel.";
         window.parent.postMessage({type: 'challengeSolved', id:21}, '*');
