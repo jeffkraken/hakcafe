@@ -26,5 +26,4 @@ This project simulates a basic challenge environment with clickable tiles that m
 - Add fourth set of challenges (bring total to 36)
 - Update storage to focus on sesssions or use sqlite.
 - Fix challenge 19, unlockInvite() not generating right flag. (correct should be flag{invite-code-123})
-- Fix challenge 21, only 1 IP in logs... makes it an easy answer.
 - Fix challenge 23, window sizing for 'terminal' is too big and answer is redundant.
