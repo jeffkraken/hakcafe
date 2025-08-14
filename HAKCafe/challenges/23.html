@@ -5,7 +5,7 @@
   <style>
     body {background: #222; color: white; font-family: monospace; padding: 20px;}
 
-    #terminal {background: #111; border: 1px solid #555; padding: 15px; height: 300px; overflow-y: auto; margin-bottom: 20px;}
+    #terminal {background: #111; border: 1px solid #555; padding: 15px; height: 150px; overflow-y: auto; margin-bottom: 20px;}
 
     .input-line {display: flex; gap: 5px; margin-top: 10px;}
 
@@ -47,10 +47,10 @@
     const terminal = document.getElementById('terminal');
     const commands = {
       "ls /home/app/files": "script.sh  config.yaml  db.sqlite  secret.key  update.log",
-      "ls -l /home/app/files": `-rwxr-xr-x 1 root root 4096 Jul 29 12:00 script.sh
--rw-r--r-- 1 app  app  2100 Jul 29 12:00 config.yaml
--rw-rw-r-- 1 app  app  8500 Jul 29 12:01 db.sqlite
--rw------- 1 root root  512 Jul 29 12:02 secret.key
+      "ls -l /home/app/files": `-rwxr-xr-x 1 root root 4096 Jul 29 12:00 script.sh \n
+-rw-r--r-- 1 app  app  2100 Jul 29 12:00 config.yaml \n
+-rw-rw-r-- 1 app  app  8500 Jul 29 12:01 db.sqlite \n
+-rw------- 1 root root  512 Jul 29 12:02 secret.key \n
 -rw-rw-rw- 1 root root 1024 Jul 29 12:03 update.log`,
       "cat /home/app/files/update.log": "[LOG] System updated.\n[WARN] Writable by all users.",
       "cat /home/app/files/secret.key": "Permission denied",
