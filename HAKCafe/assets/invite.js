@@ -1,9 +1,9 @@
 (function () {
-    // Encoded flag using XOR with key 42
-    const data = [76, 70, 75, 77, 85, 68, 92, 94, 94, 79, 71, 69, 79, 71, 7, 27, 24, 25];
+    // Encoded
+    const data = [76, 70, 75, 77, 81, 65, 67, 80, 82, 94, 73, 71, 78, 71, 6, 24, 27, 24, 25];
     const key = 42;
 
-    // Decodes the XOR-encoded string
+    // Decoder
     function decode(arr, k) {
         return arr.map(n => String.fromCharCode(n ^ k)).join('');
     }
