@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <title>Challenge 31: The Shuffled Wordlist</title>
+  <link rel="stylesheet" href="../style.css"/>
+  <style>
+    .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+    table { width:100%; border-collapse: collapse; margin-top:.5rem; }
+    th, td { border:1px solid #333; padding:.4rem; text-align:left; }
+    .hint { color:#aaa; font-size:.9rem; }
+    .ok { color:#34d399; }
+    .bad { color:#f87171; }
+    details { margin-top: 1rem; }
+  </style>
+</head>
+<body>
+  <h2>Challenge 31: The Shuffled Wordlist</h2>
+  <p>
+    The wordlist you need is shuffled and unusable as-is. First, <strong>decode</strong> it in the browser,
+    then crack the hashes below using the decoded words.
+  </p>
+  <p class="hint">All cracking happens locally with the Web Crypto API via <span class="mono">pwcrack.js</span>.</p>
+
+  <h3>Targets</h3>
+  <table>
+    <thead>
+      <tr><th>User</th><th>Algorithm</th><th>Hash (hex)</th><th>Status</th></tr>
+    </thead>
+    <tbody id="targets" class="mono">
+      <tr data-user="barista" data-hash="ff61e36f93dad74ea09d7c86a0e99e80b2fc564a66dd93ef1a5f8e0e47734252"></tr> <!-- cappuccino! -->
+      <tr data-user="shiftlead" data-hash="d3952511f75d22ed3ff2667f52a989361cb8cde121af40f62d44243e0f8cf6a9"></tr> <!-- espresso2025 -->
+      <tr data-user="roaster" data-hash="0c165dd370af7beb2e80f60b2cbc6b468d7f28dbdb5de549f7d28aa93555f3ed"></tr> <!-- macchiato -->
+    </tbody>
+  </table>
+
+  <div style="margin-top:1rem;">
+    <button id="loadBtn">Load Shuffled Wordlist</button>
+    <button id="decodeBtn" disabled>Decode Wordlist</button>
+    <button id="crackBtn" disabled>Run Crack</button>
+    <button id="resetBtn">Reset Result</button>
+  </div>
+
+  <div id="status" class="mono" style="margin-top:.75rem;" aria-live="polite"></div>
+  <pre id="preview" class="mono" style="margin-top:.5rem; white-space:pre-wrap; max-height:10rem; overflow:auto;"></pre>
+  <pre id="result" class="mono" style="margin-top:.5rem; white-space:pre-wrap;" aria-live="polite"></pre>
+
+  <script type="module">
+    import { crackHash } from "../assets/pwcrack.js";
+
+    const tbody = document.getElementById("targets");
+    const rows = [];
+    [...tbody.querySelectorAll("tr")].forEach(tr => {
+      const user = tr.dataset.user;
+      const hash = tr.dataset.hash;
+      tr.innerHTML = `
+        <td>${user}</td>
+        <td>SHA-256</td>
+        <td style="word-break:break-all;">${hash}</td>
+        <td class="status bad">pending</td>
+      `;
+      rows.push(tr);
+    });
+
+    const statusEl = document.getElementById("status");
+    const previewEl = document.getElementById("preview");
+    const resultEl = document.getElementById("result");
+    const loadBtn = document.getElementById("loadBtn");
+    const decodeBtn = document.getElementById("decodeBtn");
+    const crackBtn = document.getElementById("crackBtn");
+
+    let shuffled = [];
+    let decoded = [];
+    let ready = { loaded: false, decoded: false };
+
+    async function fetchText(path) {
+      const res = await fetch(path);
+      if (!res.ok) throw new Error(`Failed to fetch ${path}`);
+      return res.text();
+    }
+
+    // ROT13 for ASCII letters
+    function rot13(s) {
+      return s.replace(/[a-zA-Z]/g, c => {
+        const base = c <= 'Z' ? 65 : 97;
+        return String.fromCharCode(((c.charCodeAt(0) - base + 13) % 26) + base);
+      });
+    }
+
+    // The shuffle used to create the file was: rot13(reverse(word)).
+    // So decoding is: reverse(rot13(word)).
+    function decodeWord(w) {
+      const afterRot = rot13(w);
+      return afterRot.split("").reverse().join("");
+    }
+
+    function showPreview(list, label) {
+      const first = list.slice(0, 12);
+      previewEl.textContent = `${label} (${list.length} entries):\n` + first.map((w, i) => `${String(i+1).padStart(2," ")}. ${w}`).join("\n") +
+        (list.length > 12 ? `\n… ${list.length - 12} more` : "");
+    }
+
+    async function loadShuffledWordlist() {
+      statusEl.textContent = "Loading shuffled wordlist…";
+      const txt = await fetchText(`../assets/wordlist-shuffled.txt?ts=${Date.now()}`);
+      shuffled = txt.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
+      if (!shuffled.length) throw new Error("Shuffled wordlist is empty.");
+      ready.loaded = true;
+      decodeBtn.disabled = false;
+      crackBtn.disabled = true;
+      statusEl.textContent = `Loaded ${shuffled.length} shuffled entries from assets/wordlist-shuffled.txt`;
+      showPreview(shuffled, "Shuffled preview");
+    }
+
+    function decodeWordlist() {
+      if (!ready.loaded) return;
+      statusEl.textContent = "Decoding wordlist…";
+      decoded = shuffled.map(decodeWord).filter(Boolean);
+      const seen = new Set();
+      decoded = decoded.filter(w => {
+        const key = w;
+        if (seen.has(key)) return false;
+        seen.add(key);
+        return true;
+      });
+      ready.decoded = true;
+      crackBtn.disabled = false;
+      statusEl.textContent = `Decoded ${decoded.length} entries. Ready to crack.`;
+      showPreview(decoded, "Decoded preview");
+    }
+
+    async function crackAll() {
+      if (!ready.decoded) return;
+      resultEl.textContent = "";
+      statusEl.textContent = "Cracking with decoded wordlist…";
+
+      const cracked = [];
+      for (const tr of rows) {
+        const user = tr.querySelector("td:first-child").textContent;
+        const hashHex = tr.dataset.hash;
+        const tdStatus = tr.querySelector(".status");
+
+        if (!/^[a-f0-9]{64}$/i.test(hashHex)) {
+          tdStatus.textContent = "invalid hash";
+          tdStatus.classList.remove("ok"); tdStatus.classList.add("bad");
+          continue;
+        }
+
+        const out = await crackHash({
+          hashHex,
+          algo: "SHA-256",
+          wordlist: decoded,
+          prefix: "",
+          suffix: "",
+          caseVariants: true
+        });
+
+        if (out.found) {
+          tdStatus.textContent = `cracked: "${out.password}"`;
+          tdStatus.classList.remove("bad"); tdStatus.classList.add("ok");
+          cracked.push({ user, password: out.password });
+        } else {
+          tdStatus.textContent = "not cracked";
+          tdStatus.classList.remove("ok"); tdStatus.classList.add("bad");
+        }
+
+        await new Promise(r => setTimeout(r, 0));
+      }
+
+      if (cracked.length === rows.length) {
+        localStorage.setItem("solved-31", "true");
+        resultEl.textContent = "All hashes cracked. Challenge complete!";
+      } else {
+        const lines = cracked.map(c => `${c.user} → "${c.password}"`);
+        resultEl.textContent = (lines.length ? lines.join("\n") + "\n\n" : "") +
+`Not all hashes were cracked.
+Hint: You must decode the shuffled list correctly first.`;
+      }
+      statusEl.textContent = "";
+    }
+
+    // --- Wire up buttons ---
+    document.getElementById("loadBtn").addEventListener("click", async () => {
+      try { await loadShuffledWordlist(); }
+      catch (e) { statusEl.textContent = e.message; console.error(e); }
+    });
+
+    document.getElementById("decodeBtn").addEventListener("click", () => {
+      try { decodeWordlist(); }
+      catch (e) { statusEl.textContent = "Decode error."; console.error(e); }
+    });
+
+    document.getElementById("crackBtn").addEventListener("click", () => {
+      crackAll();
+    });
+
+    document.getElementById("resetBtn").addEventListener("click", () => {
+      resultEl.textContent = "";
+      statusEl.textContent = "";
+      document.querySelectorAll(".status").forEach(td => {
+        td.textContent = "pending";
+        td.classList.remove("ok"); td.classList.add("bad");
+      });
+      localStorage.removeItem("solved-31");
+      shuffled = []; decoded = []; ready = { loaded: false, decoded: false };
+      previewEl.textContent = "";
+      decodeBtn.disabled = true; crackBtn.disabled = true;
+    });
+  </script>
+
+  <details>
+    <summary>Clue</summary>
+    <p class="mono">Decoding rule: <strong>decode(word) = ROT13(reverse(word))</strong>.</p>
+  </details>
+</body>
+</html>
