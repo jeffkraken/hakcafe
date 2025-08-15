@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <title>Challenge 28: Hash ID & Crack (Browser-Only)</title>
+  <link rel="stylesheet" href="../style.css"/>
+  <style>
+    .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+    .hint { color:#888; font-size:.9rem; }
+  </style>
+</head>
+<body>
+  <h2>Challenge 28: Hash ID &amp; Crack (Browser-Only)</h2>
+  <p>
+    Identify the hash type and recover the original password using a small dictionary.
+    No servers. Everything happens in your browser.
+  </p>
+
+  <label for="hash" class="mono">Hash (hex):</label><br/>
+  <input id="hash" type="text" class="mono" style="width:100%"
+         value="f2ab9bcd39f99d1b25b6b2b0a5039e78a169f1db3a3b5e74759db2b5a7d2a3d0"/>
+
+  <div class="hint">Try changing the hash to your own target if you want to vary the flag.</div>
+  <br/>
+
+  <div>
+    <label>Assumed algorithm for cracking:</label>
+    <select id="algo">
+      <option>SHA-256</option>
+      <option>SHA-1</option>
+      <option>SHA-384</option>
+      <option>SHA-512</option>
+    </select>
+  </div>
+
+  <details style="margin-top:.5rem;">
+    <summary>Optional: prefix/suffix (simulate known salt)</summary>
+    <label>Prefix: <input id="prefix" type="text" placeholder="e.g., salt_"/></label>
+    <label>Suffix: <input id="suffix" type="text" placeholder="e.g., _2025"/></label>
+    <label style="margin-left:1rem;"><input id="casevars" type="checkbox"/> Try case variants</label>
+  </details>
+
+  <div style="margin-top:1rem;">
+    <button id="idBtn">Identify Hash Type</button>
+    <button id="crackBtn">Crack</button>
+  </div>
+
+  <div id="status" class="mono" style="margin-top:.75rem;"></div>
+  <div id="result" class="mono" style="margin-top:.5rem;"></div>
+
+  <script type="module">
+    import { identifyHashType, crackHash } from "../assets/pwcrack.js";
+
+    const hashEl = document.getElementById("hash");
+    const algoEl = document.getElementById("algo");
+    const prefixEl = document.getElementById("prefix");
+    const suffixEl = document.getElementById("suffix");
+    const caseEl  = document.getElementById("casevars");
+    const statusEl = document.getElementById("status");
+    const resultEl = document.getElementById("result");
+
+    async function loadWordlist() {
+      const res = await fetch("../assets/wordlist.txt");
+      const txt = await res.text();
+      return txt.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
+    }
+
+    document.getElementById("idBtn").addEventListener("click", () => {
+      const t = identifyHashType(hashEl.value);
+      resultEl.textContent = `Likely type: ${t}`;
+    });
+
+    document.getElementById("crackBtn").addEventListener("click", async () => {
+      resultEl.textContent = "";
+      statusEl.textContent = "Loading wordlist…";
+      const list = await loadWordlist();
+
+      const hexOnly = /^[a-f0-9]+$/i.test(hashEl.value);
+      if (!hexOnly) {
+        resultEl.textContent = "This demo expects a hex digest (e.g., SHA-256).";
+        statusEl.textContent = "";
+        return;
+      }
+
+      statusEl.textContent = `Cracking with ${algoEl.value}, ${list.length} candidates…`;
+      try {
+        const { found, password } = await crackHash({
+          hashHex: hashEl.value,
+          algo: algoEl.value,
+          wordlist: list,
+          prefix: prefixEl.value,
+          suffix: suffixEl.value,
+          caseVariants: caseEl.checked
+        });
+
+        if (found) {
+          resultEl.textContent = `Match found: "${password}"`;
+          localStorage.setItem('solved-28', 'true');
+        } else {
+          resultEl.textContent = "No match in the provided wordlist.";
+        }
+      } catch (e) {
+        console.error(e);
+        resultEl.textContent = "Error during cracking — see console.";
+      } finally {
+        statusEl.textContent = "";
+      }
+    });
+  </script>
+</body>
+</html>
