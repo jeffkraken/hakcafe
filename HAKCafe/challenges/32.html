@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <title>Challenge 32: WHOIS on the Loose</title>
+  <link rel="stylesheet" href="../style.css"/>
+  <style>
+    .mono{font-family:ui-monospace, SFMono-Regular, Menlo, Consolas, monospace}
+    table{width:100%; border-collapse:collapse; margin:.75rem 0}
+    th,td{border:1px solid #333; padding:.4rem; text-align:left}
+    .hint{color:#aaa; font-size:.9rem}
+    .ok{color:#34d399} .bad{color:#f87171}
+    details{margin-top:1rem}
+    .muted{color:#777}
+  </style>
+</head>
+<body>
+  <h2>Challenge 32: WHOIS on the Loose</h2>
+  <p>
+    Our helpdesk saw suspicious password-reset links circulating. Use WHOIS to figure out
+    <strong>which domain is malicious</strong> and <strong>who the registrant is</strong>.
+    Everything happens in-browser using a simulated WHOIS dataset.
+  </p>
+
+  <details>
+    <summary>Clues (from ticket comments & logs)</summary>
+    <pre class="mono muted" style="white-space:pre-wrap">
+• Link seen in SMS: hxxps://hakcafe-support[.]com/reset?id=78f...
+• Inventory dashboard referrer: hxxps://coffee-inventory[.]cloud/metrics
+• Careers link from an email footer: hxxps://careers.hakcafejobs[.]com/openings
+• Normal SSO: hxxps://auth.hakcafe[.]com/login
+    </pre>
+    <p class="hint">Tip: Enter domains or full URLs below; the tool will extract the apex domain (e.g., hakcafe-support.com).</p>
+  </details>
+
+  <h3>Step 1: WHOIS Lookup</h3>
+  <div>
+    <label class="mono">Domain or URL:</label><br/>
+    <input id="domain" type="text" class="mono" style="width:100%" placeholder="e.g., https://hakcafe-support.com/reset"/>
+    <button id="lookupBtn">Lookup WHOIS</button>
+    <span id="lookupStatus" class="mono" aria-live="polite"></span>
+  </div>
+
+  <div id="whoisCard" style="display:none; margin-top:.75rem;">
+    <table class="mono">
+      <tbody id="whoisBody"></tbody>
+    </table>
+    <div class="hint">Review creation date, registrar, and registrant details. Does anything look off?</div>
+  </div>
+
+  <h3>Step 2: Submit Your Finding</h3>
+  <p>Identify the phishing/brand-impersonation domain and its registrant (org or name):</p>
+  <div>
+    <label class="mono">Malicious domain (apex):</label><br/>
+    <input id="answerDomain" type="text" class="mono" style="width:100%" placeholder="hakcafe-support.com"/>
+  </div>
+  <div style="margin-top:.5rem;">
+    <label class="mono">Registrant (org or person):</label><br/>
+    <input id="answerRegistrant" type="text" class="mono" style="width:100%" placeholder="Perimeter Beans Ltd"/>
+  </div>
+  <div style="margin-top:.75rem;">
+    <button id="submitBtn">Submit Answer</button>
+    <span id="submitStatus" class="mono" aria-live="polite"></span>
+  </div>
+
+  <pre id="result" class="mono" style="margin-top:.75rem; white-space:pre-wrap;" aria-live="polite"></pre>
+
+  <script type="module">
+    import { whoisLookup, toApexDomain, validateAnswer } from "../assets/whoissim.js";
+
+    const domainEl = document.getElementById("domain");
+    const lookupBtn = document.getElementById("lookupBtn");
+    const lookupStatus = document.getElementById("lookupStatus");
+    const whoisCard = document.getElementById("whoisCard");
+    const whoisBody = document.getElementById("whoisBody");
+
+    const ansDomainEl = document.getElementById("answerDomain");
+    const ansRegEl = document.getElementById("answerRegistrant");
+    const submitBtn = document.getElementById("submitBtn");
+    const submitStatus = document.getElementById("submitStatus");
+    const resultEl = document.getElementById("result");
+
+    function renderWhois(rec, apex) {
+      whoisBody.innerHTML = "";
+      const rows = [
+        ["Domain", apex],
+        ["Created", rec?.created ?? "(unknown)"],
+        ["Registrar", rec?.registrar ?? "(unknown)"],
+        ["Registrant Org", rec?.registrant_org ?? "(unknown)"],
+        ["Registrant Name", rec?.registrant_name ?? "(unknown)"],
+        ["Registrant Email", rec?.registrant_email ?? "(unknown)"],
+        ["Nameservers", (rec?.nameservers || []).join(", ") || "(none)"],
+        ["Status", (rec?.status || []).join(", ") || "(none)"],
+        ["Notes", rec?.notes ?? ""]
+      ];
+      for (const [k,v] of rows) {
+        const tr = document.createElement("tr");
+        const th = document.createElement("th"); th.textContent = k;
+        const td = document.createElement("td"); td.textContent = v;
+        tr.appendChild(th); tr.appendChild(td);
+        whoisBody.appendChild(tr);
+      }
+      whoisCard.style.display = "block";
+    }
+
+    lookupBtn.addEventListener("click", async () => {
+      resultEl.textContent = "";
+      submitStatus.textContent = "";
+      lookupStatus.textContent = " Looking up…";
+      try {
+        const input = domainEl.value.trim();
+        if (!input) { lookupStatus.textContent = " Enter a domain or URL."; return; }
+        const { apex, record, suggestions } = await whoisLookup(input);
+        if (!record) {
+          lookupStatus.textContent = ` No WHOIS record for "${toApexDomain(input)}". Suggestions: ${suggestions.slice(0,5).join(", ")}`;
+          whoisCard.style.display = "none";
+          return;
+        }
+        lookupStatus.textContent = ` Found WHOIS for ${apex}`;
+        renderWhois(record, apex);
+        ansDomainEl.value = apex;
+      } catch (e) {
+        console.error(e);
+        lookupStatus.textContent = " Error during lookup (see console).";
+      }
+    });
+
+    submitBtn.addEventListener("click", async () => {
+      resultEl.textContent = "";
+      submitStatus.textContent = " Checking...";
+      try {
+        const d = ansDomainEl.value.trim();
+        const r = ansRegEl.value.trim();
+        if (!d || !r) { submitStatus.textContent = " Provide both fields."; return; }
+        const { apex, record } = await whoisLookup(d);
+        if (!record) { submitStatus.textContent = " Unknown domain; run a WHOIS lookup first."; return; }
+        const verdict = validateAnswer(record, d, r);
+        if (verdict.ok) {
+          localStorage.setItem("solved-32", "true");
+          submitStatus.textContent = "";
+          resultEl.textContent = "Correct! The malicious domain and registrant match our investigation.\nGreat work.";
+        } else {
+          let msg = "Not quite.";
+          if (!verdict.domainMatch) msg += " The domain you provided is not the malicious one.";
+          if (!verdict.registrantMatch) msg += " The registrant text doesn't match.";
+          submitStatus.textContent = "";
+          resultEl.textContent = msg + "\nHint: Re-check the WHOIS details and the creation date/notes.";
+        }
+      } catch (e) {
+        console.error(e);
+        submitStatus.textContent = " Error checking answer.";
+      }
+    });
+  </script>
+</body>
+</html>
