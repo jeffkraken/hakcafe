@@ -44,8 +44,8 @@
     <button id="resetBtn">Reset Result</button>
   </div>
 
-  <div id="status" class="mono" style="margin-top:.75rem;"></div>
-  <pre id="result" class="mono" style="margin-top:.5rem; white-space:pre-wrap;"></pre>
+  <div id="status" class="mono" style="margin-top:.75rem;" aria-live="polite"></div>
+  <pre id="result" class="mono" style="margin-top:.5rem; white-space:pre-wrap;" aria-live="polite"></pre>
 
   <script type="module">
     import { crackHash } from "../assets/pwcrack.js";
@@ -68,7 +68,8 @@
     const resultEl = document.getElementById("result");
     let wordlist = [];
 
-    async function loadWordlist(cacheBust=true) {
+    async function loadWordlist(cacheBust = true) {
+      // Cache-bust so local edits are picked up
       const url = cacheBust ? `../assets/wordlist.txt?ts=${Date.now()}` : `../assets/wordlist.txt`;
       const res = await fetch(url);
       if (!res.ok) throw new Error("Failed to load wordlist.txt");
@@ -80,6 +81,15 @@
       const user = tr.querySelector("td:first-child").textContent;
       const hashHex = tr.dataset.hash;
 
+      // Sanity check: enforce SHA-256 hex digest length
+      if (!/^[a-f0-9]{64}$/i.test(hashHex)) {
+        const tdStatus = tr.querySelector(".status");
+        tdStatus.textContent = "invalid hash";
+        tdStatus.classList.remove("ok");
+        tdStatus.classList.add("bad");
+        return null;
+      }
+
       const out = await crackHash({
         hashHex,
         algo: "SHA-256",
@@ -88,6 +98,7 @@
         suffix: "",
         caseVariants: true
       });
+
       const tdStatus = tr.querySelector(".status");
       if (out.found) {
         tdStatus.textContent = `cracked: "${out.password}"`;
@@ -125,15 +136,15 @@
       for (const tr of rows) {
         const res = await crackRow(tr);
         if (res) cracked.push(res);
-        await new Promise(r => setTimeout(r, 0));
+        await new Promise(r => setTimeout(r, 0)); // yield to UI
       }
 
       if (cracked.length === rows.length) {
         localStorage.setItem("solved-30", "true");
-        resultEl.textContent = "All hashes cracked. Challenge complete!";
+        resultEl.textContent = "✅ All hashes cracked. Challenge complete!";
       } else {
         resultEl.textContent =
-`Not all hashes were cracked.
+`❌ Not all hashes were cracked.
 Tip: expand your wordlist with likely coffee-themed choices and variants, then click "Reload Wordlist" and run again.`;
       }
       statusEl.textContent = "";
@@ -150,7 +161,7 @@ Tip: expand your wordlist with likely coffee-themed choices and variants, then c
       });
     });
 
-    // Optional: pre-load wordlist once on open for convenience
+    // Pre-load wordlist once on open for convenience
     (async () => {
       try {
         wordlist = await loadWordlist(true);
@@ -160,16 +171,15 @@ Tip: expand your wordlist with likely coffee-themed choices and variants, then c
       }
     })();
   </script>
-  
-  <footer>
-    <!-- Try adding
-    cortado 2024
-    cortado 2025
-    pumpk!nSpice
-    PumpkinSpice!
-    4m3r1c4n0
-    Americano
-    -->
-  </footer>
+
+  <details style="margin-top:1rem;">
+    <summary>Need a nudge?</summary>
+    <pre class="mono">
+Try adding:
+cortado2025
+PumpkinSpice!
+Americano
+    </pre>
+  </details>
 </body>
 </html>
