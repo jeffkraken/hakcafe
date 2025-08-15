@@ -12,12 +12,13 @@
 
   <button onclick="refreshTiles()">Refresh Tiles</button>
   <button id="submit-score">Submit Score</button>
+  
+  <div id="status" aria-live="polite"></div>
+
   <div class="grid" id="tile-grid">
     <!-- Tiles inserted by script.js -->
   </div>
   
-  <div id="status"></div>
-
   <!-- Challenge Container -->
   <div id="challenge-container" style="display: none; position: fixed; bottom: 0; left: 0; width: 100%; height: 50vh; background: #111; z-index: 1000;">
     <button onclick="closeChallenge()" style="position: absolute; top: 5px; right: 10px; z-index: 1001;">Close</button>
@@ -29,5 +30,6 @@
   <script src="script.js"></script>
 </body>
 </html>
+
 
 
