@@ -1,4 +1,4 @@
-const totalChallenges = 27;
+const totalChallenges = 32;
 const visibleCount = 9;
 
 function getChallenges() {
@@ -154,6 +154,7 @@ document.getElementById("submit-score").addEventListener("click", async () => {
 });
 
 renderTiles();
+
 
 
 
