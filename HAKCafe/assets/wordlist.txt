@@ -1,0 +1,12 @@
+coffee
+espresso
+latte
+cappuccino
+mocha
+barista
+coffee1
+coffee123
+password
+Password
+Coffee123
+P@ssw0rd
