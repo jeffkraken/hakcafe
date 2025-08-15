@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <title>Challenge 30: Update Your Wordlist (Browser-Only)</title>
+  <link rel="stylesheet" href="../style.css"/>
+  <style>
+    .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+    table { width:100%; border-collapse: collapse; margin-top:.5rem; }
+    th, td { border:1px solid #333; padding:.4rem; text-align:left; }
+    .hint { color:#aaa; font-size:.9rem; }
+    .ok { color:#34d399; }
+    .bad { color:#f87171; }
+  </style>
+</head>
+<body>
+  <h2>Challenge 30: Update Your Wordlist</h2>
+  <p>
+    Your goal is to crack all of the SHA-256 password hashes below
+    <strong>by updating <span class="mono">/assets/wordlist.txt</span> locally</strong>.
+    The default wordlist is intentionally too small.
+  </p>
+  <p class="hint">
+    Hints: Think coffee shop lingo and seasonal drinks. After editing the file, click
+    <em>Reload Wordlist</em> and then <em>Run Crack</em>.
+  </p>
+
+  <table>
+    <thead>
+      <tr><th>User</th><th>Algorithm</th><th>Hash (hex)</th><th>Status</th></tr>
+    </thead>
+    <tbody id="targets" class="mono">
+      <!-- All are SHA-256(password) with no salt. The default wordlist will NOT crack these
+           until appropriate words are added to assets/wordlist.txt -->
+      <tr data-user="finbar"   data-hash="1906a0f356b33858e927f89264f17391f3d3aa635ca22907adb87843e411053d"></tr>
+      <tr data-user="autumn"   data-hash="6d4c35264a9580b71f3679495b3042bab50f5a4fc0aea930c5b749e4d250fc02"></tr>
+      <tr data-user="classic"  data-hash="86bfb183104e3b86b57cd7e7ef80f89665eb084be9b972abbb48374198e900cd"></tr>
+    </tbody>
+  </table>
+
+  <div style="margin-top:1rem;">
+    <button id="reloadBtn">Reload Wordlist</button>
+    <button id="crackBtn">Run Crack</button>
+    <button id="resetBtn">Reset Result</button>
+  </div>
+
+  <div id="status" class="mono" style="margin-top:.75rem;"></div>
+  <pre id="result" class="mono" style="margin-top:.5rem; white-space:pre-wrap;"></pre>
+
+  <script type="module">
+    import { crackHash } from "../assets/pwcrack.js";
+
+    const tbody = document.getElementById("targets");
+    const rows = [];
+    [...tbody.querySelectorAll("tr")].forEach(tr => {
+      const user = tr.dataset.user;
+      const hash = tr.dataset.hash;
+      tr.innerHTML = `
+        <td>${user}</td>
+        <td>SHA-256</td>
+        <td style="word-break:break-all;">${hash}</td>
+        <td class="status bad">pending</td>
+      `;
+      rows.push(tr);
+    });
+
+    const statusEl = document.getElementById("status");
+    const resultEl = document.getElementById("result");
+    let wordlist = [];
+
+    async function loadWordlist(cacheBust=true) {
+      const url = cacheBust ? `../assets/wordlist.txt?ts=${Date.now()}` : `../assets/wordlist.txt`;
+      const res = await fetch(url);
+      if (!res.ok) throw new Error("Failed to load wordlist.txt");
+      const txt = await res.text();
+      return txt.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
+    }
+
+    async function crackRow(tr) {
+      const user = tr.querySelector("td:first-child").textContent;
+      const hashHex = tr.dataset.hash;
+
+      const out = await crackHash({
+        hashHex,
+        algo: "SHA-256",
+        wordlist,
+        prefix: "",
+        suffix: "",
+        caseVariants: true
+      });
+      const tdStatus = tr.querySelector(".status");
+      if (out.found) {
+        tdStatus.textContent = `cracked: "${out.password}"`;
+        tdStatus.classList.remove("bad");
+        tdStatus.classList.add("ok");
+        return { user, password: out.password };
+      } else {
+        tdStatus.textContent = "not cracked";
+        tdStatus.classList.remove("ok");
+        tdStatus.classList.add("bad");
+        return null;
+      }
+    }
+
+    document.getElementById("reloadBtn").addEventListener("click", async () => {
+      statusEl.textContent = "Reloading wordlist…";
+      try {
+        wordlist = await loadWordlist(true);
+        statusEl.textContent = `Loaded ${wordlist.length} words from assets/wordlist.txt`;
+      } catch (e) {
+        statusEl.textContent = "Error loading wordlist. See console.";
+        console.error(e);
+      }
+    });
+
+    document.getElementById("crackBtn").addEventListener("click", async () => {
+      if (!wordlist.length) {
+        statusEl.textContent = "No wordlist loaded yet. Click 'Reload Wordlist' first.";
+        return;
+      }
+      statusEl.textContent = "Cracking…";
+      resultEl.textContent = "";
+
+      const cracked = [];
+      for (const tr of rows) {
+        const res = await crackRow(tr);
+        if (res) cracked.push(res);
+        await new Promise(r => setTimeout(r, 0));
+      }
+
+      if (cracked.length === rows.length) {
+        localStorage.setItem("solved-30", "true");
+        resultEl.textContent = "All hashes cracked. Challenge complete!";
+      } else {
+        resultEl.textContent =
+`Not all hashes were cracked.
+Tip: expand your wordlist with likely coffee-themed choices and variants, then click "Reload Wordlist" and run again.`;
+      }
+      statusEl.textContent = "";
+    });
+
+    document.getElementById("resetBtn").addEventListener("click", () => {
+      resultEl.textContent = "";
+      statusEl.textContent = "";
+      localStorage.removeItem("solved-30");
+      tbody.querySelectorAll(".status").forEach(td => {
+        td.textContent = "pending";
+        td.classList.remove("ok");
+        td.classList.add("bad");
+      });
+    });
+
+    // Optional: pre-load wordlist once on open for convenience
+    (async () => {
+      try {
+        wordlist = await loadWordlist(true);
+        statusEl.textContent = `Loaded ${wordlist.length} words from assets/wordlist.txt`;
+      } catch (e) {
+        console.warn("Wordlist not preloaded:", e);
+      }
+    })();
+  </script>
+  
+  <footer>
+    <!-- Try adding
+    cortado 2024
+    cortado 2025
+    pumpk!nSpice
+    PumpkinSpice!
+    4m3r1c4n0
+    Americano
+    -->
+  </footer>
+</body>
+</html>
