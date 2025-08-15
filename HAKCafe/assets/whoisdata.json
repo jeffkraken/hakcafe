@@ -1,0 +1,64 @@
+{
+  "records": [
+    {
+      "domain": "hakcafe.com",
+      "created": "2012-05-14",
+      "registrar": "NameSecure LLC",
+      "registrant_org": "HAKCafe, Inc.",
+      "registrant_name": "Infra Team",
+      "registrant_email": "admin@hakcafe.com",
+      "nameservers": ["ns1.hakcafe.com", "ns2.hakcafe.com"],
+      "status": ["clientTransferProhibited"],
+      "malicious": false,
+      "notes": "Primary corporate domain."
+    },
+    {
+      "domain": "hakcafe-support.com",
+      "created": "2025-07-22",
+      "registrar": "CheapNames Ltd.",
+      "registrant_org": "Perimeter Beans Ltd",
+      "registrant_name": "O. Kafe",
+      "registrant_email": "it@perimeterbeans.example",
+      "nameservers": ["ns1.quick-dns.biz", "ns2.quick-dns.biz"],
+      "status": ["clientTransferProhibited", "clientUpdateProhibited"],
+      "malicious": true,
+      "notes": "Phishing brand-impersonation domain (password-reset lure)."
+    },
+    {
+      "domain": "coffee-inventory.cloud",
+      "created": "2023-02-01",
+      "registrar": "Cloud Registry",
+      "registrant_org": "BeanChain Systems",
+      "registrant_name": "Ops",
+      "registrant_email": "ops@beanchain.io",
+      "nameservers": ["ns-11.cloudreg.net", "ns-52.cloudreg.net"],
+      "status": ["ok"],
+      "malicious": false,
+      "notes": "Legitimate vendor used for inventory dashboards."
+    },
+    {
+      "domain": "hakcafejobs.com",
+      "created": "2019-11-02",
+      "registrar": "DomainsRUs",
+      "registrant_org": "HAKCafe, Inc.",
+      "registrant_name": "HR",
+      "registrant_email": "careers@hakcafe.com",
+      "nameservers": ["ns1.hakcafe.com", "ns2.hakcafe.com"],
+      "status": ["ok"],
+      "malicious": false,
+      "notes": "Jobs/HR marketing landing domain."
+    },
+    {
+      "domain": "hkacafe.com",
+      "created": "2025-06-01",
+      "registrar": "Privacy Protect, LLC",
+      "registrant_org": "Whois Privacy Service",
+      "registrant_name": "Redacted for Privacy",
+      "registrant_email": "redacted@privacy.example",
+      "nameservers": ["dns1.parked.example", "dns2.parked.example"],
+      "status": ["clientHold"],
+      "malicious": false,
+      "notes": "Typosquat parked; currently non-resolving."
+    }
+  ]
+}
