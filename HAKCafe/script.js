@@ -4,25 +4,29 @@ const visibleCount = 9;
 function getChallenges() {
   const isSolved = (id) => !!localStorage.getItem(`solved-${id}`);
 
-  // for when all is solved?
-  let firstUnsolved = null;
+  const unsolved = [];
   for (let i = 1; i <= totalChallenges; i++) {
-    if (!isSolved(i)) {firstUnsolved = i; break;}
+    if (!isSolved(i)) unsolved.push(i);
   }
-  if (firstUnsolved === null) return [];
+  if (unsolved.length === 0) return [];
 
-  
-  // starting block based on unsolved challenges
-  const blockStart = Math.floor((firstUnsolved -1) / visibleCount) * visibleCount + 1;
-  const blockEnd = Math.min(blockStart + visibleCount -1, totalChallenges);
+  const firstUnsolved = unsolved[0];
+  const blockStart = Math.floor((firstUnsolved - 1) / visibleCount) * visibleCount + 1;
 
-  // show unsolved from block
-  const ids = [];
-  for (let id = blockStart; id <= blockEnd; id++) {
-    if (!isSolved(id)) ids.push(id);
+  const order = [];
+  for (let i = blockStart; i <= totalChallenges; i++) order.push(i);
+  for (let i = 1; i < blockStart; i++) order.push(i);
+
+  const selected = [];
+  for (const id of order) {
+    if (!isSolved(id)) {
+      selected.push(id);
+      if (selected.length >= visibleCount) break;
+    }
   }
-  return ids;
+  return selected;
 }
+
   
 
 function renderTiles() {
@@ -154,6 +158,7 @@ document.getElementById("submit-score").addEventListener("click", async () => {
 });
 
 renderTiles();
+
 
 
 
