@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <title>Challenge 29: Who’s the Weakest Link? (Salted Hash Audit)</title>
+  <link rel="stylesheet" href="../style.css"/>
+  <style>
+    .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+    table { width:100%; border-collapse: collapse; margin-top:.5rem; }
+    th, td { border:1px solid #333; padding:.4rem; text-align:left; }
+    .hint { color:#aaa; font-size:.9rem; }
+  </style>
+</head>
+<body>
+  <h2>Challenge 29: Who’s the Weakest Link? (Salted Hash Audit)</h2>
+  <p>Below is a “user database” with per-user salts and salted password hashes. Your job: find which account has a weak password that’s crackable using the small dictionary included with this site.</p>
+
+  <p class="hint">
+    Hashing scheme used here for each row is either <span class="mono">SHA-256(salt + password)</span>
+    or <span class="mono">SHA-256(password + salt)</span>. The audit tool will try both.
+  </p>
+
+  <table>
+    <thead>
+      <tr>
+        <th>User</th>
+        <th>Salt</th>
+        <th>Algorithm</th>
+        <th>Hash (hex)</th>
+      </tr>
+    </thead>
+    <tbody class="mono" id="user-rows">
+      <tr data-user="alice" data-salt="bean" data-hash="9f6a56750025e4fee43cfe8db062aeb5b1ad727283fc671436b65842f799ee78"></tr>
+      <tr data-user="bob" data-salt="hazelnut" data-hash="0c6a7725e7483755bdfe4cd43f1d65516939bf48ecc37312bc220e5c30c72a7c"></tr>
+      <tr data-user="carol" data-salt="vanilla" data-hash="4b892e8ec5e6b0ba8fa32d5d67fce6580349f44c3d3bd273a70266f6c5e86cc7"></tr>
+    </tbody>
+  </table>
+
+  <div class="hint">All rows use SHA-256. Only one of these is crackable with the included wordlist.</div>
+
+  <div style="margin-top:1rem;">
+    <button id="auditBtn">Run Audit (Try to crack each user)</button>
+    <button id="resetBtn">Reset Result</button>
+  </div>
+
+  <div id="status" class="mono" style="margin-top:.75rem;"></div>
+  <div id="result" class="mono" style="margin-top:.5rem;"></div>
+
+  <script type="module">
+    import { crackHash } from "../assets/pwcrack.js";
+
+    const tbody = document.getElementById("user-rows");
+    [...tbody.querySelectorAll("tr")].forEach(tr => {
+      const user = tr.dataset.user;
+      const salt = tr.dataset.salt;
+      const hash = tr.dataset.hash;
+      tr.innerHTML = `
+        <td>${user}</td>
+        <td>${salt}</td>
+        <td>SHA-256</td>
+        <td class="mono" style="word-break:break-all;">${hash}</td>
+      `;
+    });
+
+    const statusEl = document.getElementById("status");
+    const resultEl = document.getElementById("result");
+    const rows = [...document.querySelectorAll("#user-rows tr")];
+
+    async function loadWordlist() {
+      const res = await fetch("../assets/wordlist.txt");
+      const txt = await res.text();
+      return txt.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
+    }
+
+    async function tryCrackUser({ user, salt, hashHex, wordlist }) {
+      let r = await crackHash({ hashHex, algo: "SHA-256", wordlist, prefix: salt, suffix: "", caseVariants: true });
+      if (r.found) return { user, scheme: "salt+password", password: r.password };
+
+      r = await crackHash({ hashHex, algo: "SHA-256", wordlist, prefix: "", suffix: salt, caseVariants: true });
+      if (r.found) return { user, scheme: "password+salt", password: r.password };
+
+      return { user, scheme: null, password: null };
+    }
+
+    document.getElementById("auditBtn").addEventListener("click", async () => {
+      statusEl.textContent = "Loading wordlist and auditing users…";
+      resultEl.textContent = "";
+
+      const wordlist = await loadWordlist();
+      let cracked = [];
+
+      for (const tr of rows) {
+        const user = tr.dataset.user;
+        const salt = tr.dataset.salt;
+        const hashHex = tr.dataset.hash;
+
+        if (!/^[a-f0-9]{64}$/i.test(hashHex)) {
+          resultEl.textContent = `Row for ${user} has an invalid SHA-256 hex digest.`;
+          statusEl.textContent = "";
+          return;
+        }
+
+        const out = await tryCrackUser({ user, salt, hashHex, wordlist });
+        if (out.password) cracked.push(out);
+        await new Promise(r => setTimeout(r, 0));
+      }
+
+      statusEl.textContent = "";
+
+      if (cracked.length === 0) {
+        resultEl.textContent = "No users were cracked with the provided wordlist.";
+      } else {
+        localStorage.setItem('solved-29', 'true');
+        const lines = cracked.map(c =>
+          `✅ ${c.user} cracked (${c.scheme}). Password: "${c.password}"`
+        );
+        resultEl.textContent = lines.join("\n");
+      }
+    });
+
+    document.getElementById("resetBtn").addEventListener("click", () => {
+      resultEl.textContent = "";
+      statusEl.textContent = "";
+      localStorage.removeItem('solved-29');
+    });
+  </script>
+</body>
+</html>
